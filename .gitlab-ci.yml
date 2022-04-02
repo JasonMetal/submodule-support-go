@@ -1,0 +1,23 @@
+stages:
+  - build
+variables:
+  PROJECT_NAME: "spread"
+  PROJECT_NAME1: "spread-grpc"
+  PROJECT_NAME2: "spread-http"
+  SECRET_KEY: "189EFC3BFE9CCEE59E3D3560052038AF"
+rsync_deploy:
+  stage: build
+  script:
+    - bash /opt/deploy/syntax_check.sh
+    - "mkdir -p /data/git/release/$PROJECT_NAME/"
+    - "AUTHOR=`/opt/gitlab/embedded/bin/git log -1 | grep Author | cut -d \" \" -f 2`"
+    - "NOTICE=`/opt/gitlab/embedded/bin/git log -1 | grep -e ^[#\\|[:space:]]`"
+    - "SIGN=`echo -n 'key='$SECRET_KEY'&project='$PROJECT_NAME'&commit_id='$CI_BUILD_REF'&admin_name='$AUTHOR | md5sum | cut -d ' ' -f 1`"
+    - rsync -av go-build.sh root@10.0.3.104:/data/docker/meiyou-services-release-test/$PROJECT_NAME/
+    - ssh root@10.0.3.104 "bash /data/docker/meiyou-services-release-test/$PROJECT_NAME/go-build.sh  $PROJECT_NAME $CI_BUILD_REF spread-http spread-grpc"
+    #- ssh root@10.0.3.43 "/opt/deploy/meiyou-services.sh $PROJECT_NAME $CI_BUILD_REF 30134"
+    - "[[ $NOTICE =~ \".gitlab-ci.yml\" ]] || curl -d \"env=online&project=$PROJECT_NAME1&commit_id=$CI_BUILD_REF&admin_name=$AUTHOR&notice=$NOTICE&sign=$SIGN\" http://deploy.meiyou.com/index.php?s=/api/setinfo/ps"
+    - "[[ $NOTICE =~ \".gitlab-ci.yml\" ]] || curl -d \"env=online&project=$PROJECT_NAME2&commit_id=$CI_BUILD_REF&admin_name=$AUTHOR&notice=$NOTICE&sign=$SIGN\" http://deploy.meiyou.com/index.php?s=/api/setinfo/ps"
+
+  only:
+    - master
