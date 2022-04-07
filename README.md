@@ -24,38 +24,43 @@
 
 ## 目录结构
 
-```
+``` 
 .
-├── Dockerfile   
+├── Dockerfile          
 ├── LICENSE
 ├── README.md
-├── app         
-│      ├── grpc       # 提供grpc服务
-│      ├── http       # 提供http服务
-│      ├── models     # 数据模型层，数据表实体类
-│      └── services   # 服务层
-├── bootstrap     
-│      ├── app.go
-│      ├── config.go
-│      ├── database.go
-│      └── redis.go
-├── config          # 各个环境配置文件夹
-│      ├── bvt
-│      ├── local
-│      ├── online
-│      └── test
+├── app                 # 应用代码
+│   ├── entity            # 各种结构体定义
+│   ├── grpc              # 提供GRPC服务
+│   ├── http              # 提供HTTP服务
+│   ├── logic             # 逻辑层
+│   ├── models            # 数据模型层，数据表实体类
+│   └── services          # 服务层
+├── bootstrap          
+│   ├── app.go
+│   ├── config.go
+│   ├── database.go
+│   └── redis.go 
+├── config              # 各个环境配置
+│   ├── bvt
+│   ├── local
+│   ├── online
+│   └── test
+├── go-build.sh         # 用于ci构建
 ├── go.mod
 ├── go.sum
-├── helpers        # 常用类库封装
-│      ├── config
-│      ├── env
-│      ├── errors
-│      ├── logger
-│      └── strings
-├── main.go         # 入口文件
-└── routes          # 路由文件夹
+├── helpers             # 常用类库封装
+│   ├── config
+│   ├── env
+│   ├── errors
+│   ├── logger
+│   └── strings
+├── http-server
+├── main.go             # 入口文件
+└── routes              # 路由文件夹
     ├── base.go
-    └── other.go
+    ├── other.go
+    └── prize.go    
     
 ```
 
@@ -68,18 +73,29 @@
 
 
 2. 启动
+
    ```shell
    go run main.go -e=local # 本地可以省略local
    ```
 
 ## git-子模块
+ - 无
 
-### gitlab地址
-
+## gitlab地址
 - 无
-### 使用说明
-#### 新模块路由配置:
+
+
+## 使用说明
+###  顺序流程图
+
+![](https://static.manyidea.cloud/dev/uploads/uploadfile/images/20220407/img20407112944001599126087.png)
+
+
+
+### 新模块路由配置:
+
 1. routes目录中新建: 新路由名(例如:brand.gp)
+
 ```go
 package router
 
@@ -108,33 +124,36 @@ func RegisterOther(router *gin.Engine) {
 ```
 2. 控制器(app/http/controllers/brand)
 ```go
-package testOne
+package prize
 
 import (
 	"github.com/gin-gonic/gin"
 	"idea-go/app/http/controllers"
+	"idea-go/app/logic/prize"
+	"strconv"
 )
 
-type BrandController struct {
+type PrizeController struct {
 	controllers.BaseController
 }
 
-func NewBrand(ctx *gin.Context) *BrandController {
-	return &BrandController {
+func NewPrizeController(ctx *gin.Context) *PrizeController {
+	return &PrizeController{
 		controllers.NewBaseBaseController(ctx),
 	}
 }
 
-func (tc *BrandController) GetTest1() {
-	tc.Success("GetTest1")
-	return
+func (p *PrizeController) GetList() {
+	prizeLogic := prize.NewPrizeLogic(p.GCtx)
+	rid, err := strconv.ParseInt(p.GetQueryDefault("rid", "0").Val, 10, 32)
+	if err != nil {
+		rid = 0
+	}
+
+	ranking := prizeLogic.GetPrizeList(uint32(rid))
+	p.Success(ranking)
 }
 
-func (tc *BrandController) UpdateTest1() {
-   tc.Success("updateTest1")
-
-	return
-}
 
 ```
 
