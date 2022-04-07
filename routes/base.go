@@ -13,6 +13,8 @@ func RegisterConfig() []func(r *gin.Engine) {
 		RegisterOther,
 		// 功能模块路由
 
+		// Prize模块
+		RegisterPrize,
 	}
 }
 

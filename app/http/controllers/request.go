@@ -14,6 +14,10 @@ type Request struct {
 	Val  string
 }
 
+type Number interface {
+	~int
+}
+
 func NewRequest(ctx *gin.Context) Request {
 	return Request{GCtx: ctx}
 }
@@ -26,6 +30,11 @@ func (req Request) GetHeader(key string) Request {
 
 func (req Request) GetQuery(key string) Request {
 	req.Val = req.GCtx.Query(key)
+	return req
+}
+
+func (req Request) GetQueryDefault(key string, defaultValue string) Request {
+	req.Val = req.GCtx.DefaultQuery(key, defaultValue)
 	return req
 }
 

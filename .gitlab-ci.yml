@@ -13,11 +13,9 @@ rsync_deploy:
     - "AUTHOR=`/opt/gitlab/embedded/bin/git log -1 | grep Author | cut -d \" \" -f 2`"
     - "NOTICE=`/opt/gitlab/embedded/bin/git log -1 | grep -e ^[#\\|[:space:]]`"
     - "SIGN=`echo -n 'key='$SECRET_KEY'&project='$PROJECT_NAME'&commit_id='$CI_BUILD_REF'&admin_name='$AUTHOR | md5sum | cut -d ' ' -f 1`"
-    - rsync -av go-build.sh root@10.0.3.104:/data/docker/meiyou-services-release-test/$PROJECT_NAME/
-    - ssh root@10.0.3.104 "bash /data/docker/meiyou-services-release-test/$PROJECT_NAME/go-build.sh  $PROJECT_NAME $CI_BUILD_REF spread-http spread-grpc"
-    #- ssh root@10.0.3.43 "/opt/deploy/meiyou-services.sh $PROJECT_NAME $CI_BUILD_REF 30134"
-    - "[[ $NOTICE =~ \".gitlab-ci.yml\" ]] || curl -d \"env=online&project=$PROJECT_NAME1&commit_id=$CI_BUILD_REF&admin_name=$AUTHOR&notice=$NOTICE&sign=$SIGN\" http://deploy.meiyou.com/index.php?s=/api/setinfo/ps"
-    - "[[ $NOTICE =~ \".gitlab-ci.yml\" ]] || curl -d \"env=online&project=$PROJECT_NAME2&commit_id=$CI_BUILD_REF&admin_name=$AUTHOR&notice=$NOTICE&sign=$SIGN\" http://deploy.meiyou.com/index.php?s=/api/setinfo/ps"
+    - rsync -av go-build.sh root@10.0.3.104:/data/docker/services-release-test/$PROJECT_NAME/
+    - ssh root@10.0.3.104 "bash /data/docker/services-release-test/$PROJECT_NAME/go-build.sh  $PROJECT_NAME $CI_BUILD_REF services-http services-grpc"
+    # 通知发布系统
 
   only:
     - master

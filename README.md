@@ -66,49 +66,82 @@
     git clone git@gitee.com:DXTeam/idea-go.git
     ```
 
-2. 安装vendor包里的git submodule
-    ```shell
-    # 进入目录
-    cd idea-go
-    # 初次下载
-   
-    ```
 
-3. 启动
+2. 启动
    ```shell
-   go run server.go -e=local
+   go run main.go -e=local # 本地可以省略local
    ```
 
 ## git-子模块
 
 ### gitlab地址
 
-- [grpc-services-proto](https://gitlab.meiyou.com/meiyou-services/grpc-services-proto)
-- [grpc-services-core](https://gitlab.meiyou.com/meiyou-services/grpc-services-core)
-
+- 无
 ### 使用说明
+#### 新模块路由配置:
+1. routes目录中新建: 新路由名(例如:brand.gp)
+```go
+package router
 
-> 新项目需要引用子模块
+import (
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"idea-go/app/http/controllers/brand"
+)
 
-1. 添加子模块
-    ```shell
-    git submodule add  git@gitlab.meiyou.com:meiyou-services/grpc-services-proto.git vendor/gitlab.meiyou.com/meiyou-services/grpc-services-proto.git
-    git submodule add  git@gitlab.meiyou.com:meiyou-services/grpc-services-core.git vendor/gitlab.meiyou.com/meiyou-services/grpc-services-core.git
-    ```
+func RegisterOther(router *gin.Engine) {
+	fmt.Println("Registered brand router")
+	v2 := router.Group("/v2")
+	{
+		// http://127.0.0.1:50069/v2/test1/detail
+		v2.GET("/test1/detail", func(ctx *gin.Context) {
+			testOne.NewTestOne(ctx).GetTest1()
+		})
+		
+		// http://127.0.0.1:50069/v2/test1/update
+		v2.POST("/test1/update", func(ctx *gin.Context) {
+			testOne.NewTestOne(ctx).UpdateTest1()
+		})
+	}
+}
 
-2. 加载子模块, 第一次clone项目默认不会加载子模块, 需手动加载
-    ```shell
-    git submodule update --init --recursive
-    ```
-3. 后期子模块更新
-    ```shell
-    git submodule sync --recursive
-    git submodule update --remote
-    ```
+```
+2. 控制器(app/http/controllers/brand)
+```go
+package testOne
+
+import (
+	"github.com/gin-gonic/gin"
+	"idea-go/app/http/controllers"
+)
+
+type BrandController struct {
+	controllers.BaseController
+}
+
+func NewBrand(ctx *gin.Context) *BrandController {
+	return &BrandController {
+		controllers.NewBaseBaseController(ctx),
+	}
+}
+
+func (tc *BrandController) GetTest1() {
+	tc.Success("GetTest1")
+	return
+}
+
+func (tc *BrandController) UpdateTest1() {
+   tc.Success("updateTest1")
+
+	return
+}
+
+```
+
+
 
 ## 相关文档
 
 - [gin框架](https://github.com/gin-gonic/gin)
 - [grpc文档](https://grpc.io/docs/)
-- [git流程发布教程文档](http://wiki.meiyou.com/pages/viewpage.action?pageId=6848559)
 - [git子模块文档](https://git-scm.com/book/zh/v1/Git-%E5%B7%A5%E5%85%B7-%E5%AD%90%E6%A8%A1%E5%9D%97)

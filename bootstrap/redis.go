@@ -1,7 +1,6 @@
 package bootstrap
 
 import (
-	"fmt"
 	"github.com/gomodule/redigo/redis"
 	yCfg "github.com/olebedev/config"
 	"idea-go/helpers/config"
@@ -17,9 +16,7 @@ type RedisInstance struct {
 var redisPoolList = make(map[string][]RedisInstance)
 
 func InitRedis() {
-	path := fmt.Sprintf("./config/%s/redis.yml", DevEnv)
-
-	dbList := getDbNames(path)
+	dbList := getDbNames("redis")
 	for _, dbname := range dbList {
 		instance, err := initRedisPool(dbname)
 		if err == nil {

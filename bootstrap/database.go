@@ -1,8 +1,11 @@
 package bootstrap
 
 import (
+	"errors"
 	"fmt"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+
 	yCfg "github.com/olebedev/config"
 	"idea-go/helpers/config"
 	"strings"
@@ -17,9 +20,8 @@ type MysqlInstance struct {
 var mysqlDbList = make(map[string]MysqlInstance)
 
 func InitMysql() {
-	path := fmt.Sprintf("./config/%s/mysql.yml", DevEnv)
+	dbList := getDbNames("mysql")
 
-	dbList := getDbNames(path)
 	for _, dbname := range dbList {
 		instance, err := initDbConn(dbname)
 		if err == nil {
@@ -28,23 +30,10 @@ func InitMysql() {
 	}
 }
 
-func getDbNames(filename string) []string {
-	DbNames := make([]string, 0)
-	DBConfigs, err := config.GetConfig(filename)
-	fmt.Println(filename)
-	configList, err := DBConfigs.Map(filename)
-	if err == nil {
-		for DBName, _ := range configList {
-			DbNames = append(DbNames, DBName)
-		}
-	}
-
-	return DbNames
-}
-
 func initDbConn(dbName string) (MysqlInstance, error) {
+	path := fmt.Sprintf("./config/%s/mysql.yml", DevEnv)
 
-	cfg, err := config.GetConfig("mysql")
+	cfg, err := config.GetConfig(path)
 
 	maxOpenConns, _ := cfg.Int("mysql." + dbName + ".maxOpenConns")
 	maxIdleConns, _ := cfg.Int("mysql." + dbName + ".maxIdleConns")
@@ -115,4 +104,13 @@ func setTablePrefix(TablePrefix string) {
 		}
 		return defaultTableName
 	}
+}
+
+func GetMysqlInstance(dbName string) (MysqlInstance, error) {
+	if instance, ok := mysqlDbList[dbName]; ok {
+		return instance, nil
+	} else {
+		return instance, errors.New(dbName + " db is null")
+	}
+
 }

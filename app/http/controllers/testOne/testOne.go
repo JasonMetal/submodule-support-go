@@ -16,6 +16,7 @@ func NewTestOne(ctx *gin.Context) *TestController {
 }
 
 func (tc *TestController) GetTest1() {
+
 	tc.Success("GetTest1")
 	return
 }
