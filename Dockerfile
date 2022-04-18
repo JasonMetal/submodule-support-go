@@ -1,8 +1,4 @@
 FROM alpine
-RUN apk add tzdata
-RUN apk add bash
-RUN rm -rf /etc/localtime
-RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
 COPY config/ /idea-go/config/
 ADD ./http-server /idea-go/http-server

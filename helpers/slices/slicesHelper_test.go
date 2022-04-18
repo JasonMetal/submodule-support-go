@@ -162,6 +162,7 @@ func TestCompare(t *testing.T) {
 			t.Errorf("Compare(%v, %v) = %d, want %d", test.s1, test.s2, got, test.want)
 		}
 	}
+
 	for _, test := range compareFloatTests {
 		if got := Compare(test.s1, test.s2); got != test.want {
 			t.Errorf("Compare(%v, %v) = %d, want %d", test.s1, test.s2, got, test.want)
@@ -186,14 +187,21 @@ func TestIndex(t *testing.T) {
 }
 
 func TestEqual(t *testing.T) {
-	for _, test := range equalIntTests {
-		if got := Equal(test.s1, test.s2); got != test.want {
-			t.Errorf("Equal(%v, %v) = %t, want %t", test.s1, test.s2, got, test.want)
-		}
+	type args struct {
+		s1 []E
+		s2 []E
 	}
-	for _, test := range equalFloatTests {
-		if got := Equal(test.s1, test.s2); got != test.wantEqual {
-			t.Errorf("Equal(%v, %v) = %t, want %t", test.s1, test.s2, got, test.wantEqual)
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		// TODO: Add test cases.
+	}
+
+	for _, tt := range tests {
+		if got := Equal(tt.args.s1, tt.args.s2); got != tt.want {
+			t.Errorf("Equal() = %v, want %v", got, tt.want)
 		}
 	}
 }

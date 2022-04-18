@@ -2,7 +2,6 @@ package prize
 
 import (
 	"context"
-	"fmt"
 	"idea-go/app/entity"
 	"idea-go/app/models/common"
 )
@@ -22,9 +21,6 @@ func (p Prize) getTable() string {
 // GetByRid 根据rid获取prize数据
 func (p *Prize) GetByRid(rid uint32) *entity.PrizeData {
 	data := &entity.PrizeData{}
-	db := common.Manyideacloud(p.Ctx)
-	fmt.Println("get db")
-	fmt.Println(db)
 	err := common.Manyideacloud(p.Ctx).DB.
 		Table(p.getTable()).Select("*").
 		Where("rid=? and number>0 and status=1", rid).
@@ -33,6 +29,6 @@ func (p *Prize) GetByRid(rid uint32) *entity.PrizeData {
 	if err != nil {
 
 	}
-	return data
 
+	return data
 }

@@ -15,5 +15,6 @@ func NewPrizeService(ctx context.Context) *prizeService {
 }
 
 func (ps *prizeService) GetByRid(rid uint32) *entity.PrizeData {
+
 	return prize.NewPrize(ps.ctx).GetByRid(rid)
 }

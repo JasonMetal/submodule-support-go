@@ -1,6 +1,9 @@
 package strings
 
-import "reflect"
+import (
+	"reflect"
+	"unsafe"
+)
 
 func Empty(val interface{}) bool {
 	if val == nil {
@@ -24,4 +27,16 @@ func Empty(val interface{}) bool {
 		return v.IsNil()
 	}
 	return reflect.DeepEqual(val, reflect.Zero(v.Type()).Interface())
+}
+
+// StrToBytes string转bytes
+func StrToBytes(s string) []byte {
+	x := (*[2]uintptr)(unsafe.Pointer(&s))
+	h := [3]uintptr{x[0], x[1], x[1]}
+	return *(*[]byte)(unsafe.Pointer(&h))
+}
+
+// BytesToStr bytes转string
+func BytesToStr(b []byte) string {
+	return *(*string)(unsafe.Pointer(&b))
 }
