@@ -3,7 +3,7 @@ package common
 import (
 	"context"
 	"fmt"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	"idea-go/bootstrap"
 )
 
@@ -32,6 +32,7 @@ func (mc *MysqlClient) CheckMysqlError(err error) {
 	fmt.Println("CheckMysqlError")
 	fmt.Println(err)
 }
+
 func (mc MysqlClient) WithDBContext(ctx context.Context, name string) (*gorm.DB, error) {
 	instance, err := bootstrap.GetMysqlInstance(name)
 	if err != nil {

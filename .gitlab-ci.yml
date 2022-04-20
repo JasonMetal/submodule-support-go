@@ -1,10 +1,10 @@
 stages:
   - build
 variables:
-  PROJECT_NAME: "spread"
-  PROJECT_NAME1: "spread-grpc"
-  PROJECT_NAME2: "spread-http"
-  SECRET_KEY: "189EFC3BFE9CCEE59E3D3560052038AF"
+  PROJECT_NAME: "idea-go"
+  PROJECT_NAME1: "idea-go-grpc"
+  PROJECT_NAME2: "idea-go-http"
+  SECRET_KEY: "fd80fd5ceceda47605f422627f222b71"
 rsync_deploy:
   stage: build
   script:

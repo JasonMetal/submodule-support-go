@@ -3,12 +3,14 @@ package bootstrap
 import (
 	"errors"
 	"fmt"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-
 	yCfg "github.com/olebedev/config"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"gorm.io/gorm/schema"
 	"idea-go/helpers/config"
-	"strings"
+	"log"
+	"os"
 	"time"
 )
 
@@ -30,6 +32,20 @@ func InitMysql() {
 	}
 }
 
+func mysqlLogger() logger.Interface {
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer（日志输出的目标，前缀和日志包含的内容——译者注）
+		logger.Config{
+			SlowThreshold:             time.Second,   // 慢 SQL 阈值
+			LogLevel:                  logger.Silent, // 日志级别
+			IgnoreRecordNotFoundError: true,          // 忽略ErrRecordNotFound（记录未找到）错误
+			Colorful:                  false,         // 禁用彩色打印
+		},
+	)
+
+	return newLogger
+}
+
 func initDbConn(dbName string) (MysqlInstance, error) {
 	path := fmt.Sprintf("./config/%s/mysql.yml", DevEnv)
 
@@ -45,10 +61,6 @@ func initDbConn(dbName string) (MysqlInstance, error) {
 	servers, err := cfg.List("mysql." + dbName + ".servers")
 	if err != nil || len(servers) < 1 {
 		return MysqlInstance{}, err
-	}
-
-	if tablePrefix != "" {
-		setTablePrefix(tablePrefix)
 	}
 
 	host, _ := yCfg.Get(servers[0], "host")
@@ -70,8 +82,22 @@ func initDbConn(dbName string) (MysqlInstance, error) {
 	if writeTimeout, err := yCfg.Get(servers[0], "writeTimeout"); err == nil {
 		addr += fmt.Sprintf("&writeTimeout=%dms", writeTimeout.(int))
 	}
+	gormConfig := &gorm.Config{
+		Logger: mysqlLogger(),
+	}
 
-	db, err := gorm.Open("mysql", addr)
+	if tablePrefix != "" {
+		gormConfig.NamingStrategy = schema.NamingStrategy{
+			TablePrefix: tablePrefix,
+		}
+	}
+
+	db, err := gorm.Open(mysql.Open(addr), &gorm.Config{
+		Logger: mysqlLogger(),
+		NamingStrategy: schema.NamingStrategy{
+			TablePrefix: tablePrefix,
+		},
+	})
 
 	if err != nil {
 		//return MysqlInstance{}, errors.New("connection is not exist")
@@ -79,31 +105,24 @@ func initDbConn(dbName string) (MysqlInstance, error) {
 	}
 
 	if debug {
-		db.LogMode(true)
+		db = db.Debug()
 	}
 
-	err = db.DB().Ping()
+	DB, err := db.DB()
+
+	err = DB.Ping()
 	if err != nil {
 		return MysqlInstance{}, err
 	}
 
 	if maxLifetime > 0 {
-		db.DB().SetConnMaxLifetime(time.Duration(maxLifetime) * time.Second)
+		DB.SetConnMaxLifetime(time.Duration(maxLifetime) * time.Second)
 	}
 
-	db.DB().SetMaxIdleConns(maxIdleConns)
-	db.DB().SetMaxOpenConns(maxOpenConns)
+	DB.SetMaxIdleConns(maxIdleConns)
+	DB.SetMaxOpenConns(maxOpenConns)
 
 	return MysqlInstance{fmt.Sprintf("%s:%d/%s", host.(string), port.(int), name.(string)), db}, nil
-}
-
-func setTablePrefix(TablePrefix string) {
-	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
-		if !strings.HasPrefix(defaultTableName, TablePrefix) {
-			return TablePrefix + defaultTableName
-		}
-		return defaultTableName
-	}
 }
 
 func GetMysqlInstance(dbName string) (MysqlInstance, error) {
