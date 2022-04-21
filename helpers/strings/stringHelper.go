@@ -40,3 +40,19 @@ func StrToBytes(s string) []byte {
 func BytesToStr(b []byte) string {
 	return *(*string)(unsafe.Pointer(&b))
 }
+
+func SubStr(str string, offset int, length int) string {
+	runeData := []rune(str)
+	runeLen := len(runeData)
+	if length < 0 {
+		return ""
+	}
+	if offset == 0 && length == runeLen {
+		return str
+	}
+	if offset >= 0 && length > 0 && length <= runeLen {
+		limit := length + offset
+		return string(runeData[offset:limit])
+	}
+	return ""
+}
