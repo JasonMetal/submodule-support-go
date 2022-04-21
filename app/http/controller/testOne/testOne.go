@@ -2,16 +2,16 @@ package testOne
 
 import (
 	"github.com/gin-gonic/gin"
-	"idea-go/app/http/controllers"
+	"idea-go/app/http/controller"
 )
 
 type TestController struct {
-	controllers.BaseController
+	controller.BaseController
 }
 
 func NewTestOne(ctx *gin.Context) *TestController {
 	return &TestController{
-		controllers.NewBaseBaseController(ctx),
+		controller.NewBaseBaseController(ctx),
 	}
 }
 

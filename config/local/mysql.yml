@@ -9,7 +9,7 @@ mysql:
     servers:
       - host: 159.75.208.79
         port: 3306
-        db: manyideacloudtest
+        db: manyideacloud
         user: root
         passwd: Duoxiang88
       - host: 159.75.208.80

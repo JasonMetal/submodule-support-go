@@ -1,7 +1,7 @@
 package maps
 
 import (
-	"idea-go/helpers/slices"
+	"idea-go/helper/slices"
 	"reflect"
 	"sort"
 	"testing"

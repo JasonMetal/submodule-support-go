@@ -1,6 +1,6 @@
 package slices
 
-import "idea-go/helpers/constraints"
+import "idea-go/helper/constraints"
 
 // Index returns the index of the first occurrence of v in s,
 // or -1 if not present.

@@ -3,7 +3,7 @@ package bootstrap
 import (
 	"github.com/gomodule/redigo/redis"
 	yCfg "github.com/olebedev/config"
-	"idea-go/helpers/config"
+	"idea-go/helper/config"
 	"os"
 	"time"
 )

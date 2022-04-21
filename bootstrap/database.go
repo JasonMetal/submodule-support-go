@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
-	"idea-go/helpers/config"
+	"idea-go/helper/config"
 	"log"
 	"os"
 	"time"

@@ -3,7 +3,8 @@ package prize
 import (
 	"context"
 	"idea-go/app/entity"
-	"idea-go/app/models/common"
+	"idea-go/app/model/common"
+	"idea-go/bootstrap"
 )
 
 type Prize struct {
@@ -31,4 +32,19 @@ func (p *Prize) GetByRid(rid uint32) *entity.PrizeData {
 	}
 
 	return data
+}
+
+func (p *Prize) GetPlayRecord(prizeID uint32) *entity.HudongOnlineGamePlayRecords {
+	record := &entity.HudongOnlineGamePlayRecords{}
+	err := common.Manyideacloud(p.Ctx).DB.
+		Preload("PrizeData").
+		Where("user_prize_id=?", prizeID).
+		First(&record).
+		Error
+
+	if err != nil {
+		bootstrap.CheckError(err)
+	}
+
+	return record
 }

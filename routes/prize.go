@@ -2,15 +2,23 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"idea-go/app/http/controllers/prize"
+	"idea-go/app/http/controller/prize"
+	"idea-go/app/http/middleware"
 )
 
 func RegisterPrize(router *gin.Engine) {
 
-	v2 := router.Group("/v2")
+	prizeRoute := router.Group("/v2")
 	{
-		v2.GET("/prize/getPrizeList", func(ctx *gin.Context) {
+		// 使用中间件
+		prizeRouteWithMiddleware := prizeRoute.Use(middleware.ParseRoundId())
+		prizeRouteWithMiddleware.GET("/getPrizeList", func(ctx *gin.Context) {
 			prize.NewPrizeController(ctx).GetList()
+		})
+
+		// 不使用中间件
+		prizeRoute.GET("/detail", func(ctx *gin.Context) {
+			prize.NewPrizeController(ctx).Detail()
 		})
 
 	}

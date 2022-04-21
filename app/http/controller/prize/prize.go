@@ -2,22 +2,22 @@ package prize
 
 import (
 	"github.com/gin-gonic/gin"
-	"idea-go/app/http/controllers"
+	"idea-go/app/http/controller"
 	"idea-go/app/logic/prize"
 	"strconv"
 )
 
-type PrizeController struct {
-	controllers.BaseController
+type prizeController struct {
+	controller.BaseController
 }
 
-func NewPrizeController(ctx *gin.Context) *PrizeController {
-	return &PrizeController{
-		controllers.NewBaseBaseController(ctx),
+func NewPrizeController(ctx *gin.Context) *prizeController {
+	return &prizeController{
+		controller.NewBaseBaseController(ctx),
 	}
 }
 
-func (p *PrizeController) GetList() {
+func (p *prizeController) GetList() {
 	prizeLogic := prize.NewPrizeLogic(p.GCtx)
 	rid, err := strconv.ParseInt(p.GetQueryDefault("rid", "0").Val, 10, 32)
 	if err != nil {
@@ -26,4 +26,8 @@ func (p *PrizeController) GetList() {
 
 	ranking := prizeLogic.GetPrizeList(uint32(rid))
 	p.Success(ranking)
+}
+
+func (p *prizeController) Detail() {
+
 }
