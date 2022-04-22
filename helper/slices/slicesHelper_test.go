@@ -185,23 +185,3 @@ func TestIndex(t *testing.T) {
 		}
 	}
 }
-
-func TestEqual(t *testing.T) {
-	type args struct {
-		s1 []E
-		s2 []E
-	}
-	tests := []struct {
-		name string
-		args args
-		want bool
-	}{
-		// TODO: Add test cases.
-	}
-
-	for _, tt := range tests {
-		if got := Equal(tt.args.s1, tt.args.s2); got != tt.want {
-			t.Errorf("Equal() = %v, want %v", got, tt.want)
-		}
-	}
-}

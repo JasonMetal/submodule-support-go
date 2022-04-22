@@ -1,9 +1,7 @@
 package maps
 
 import (
-	"idea-go/helper/slices"
 	"reflect"
-	"sort"
 	"testing"
 )
 
@@ -120,25 +118,6 @@ func TestEqualFunc(t *testing.T) {
 				t.Errorf("EqualFunc() = %v, want %v", got, tt.want)
 			}
 		})
-	}
-}
-
-var m1 = map[int]int{1: 2, 2: 4, 4: 8, 8: 16}
-var m2 = map[int]string{1: "2", 2: "4", 4: "8", 8: "16"}
-
-func TestKeys(t *testing.T) {
-	want := []int{1, 2, 4, 8}
-
-	got1 := Keys(m1)
-	sort.Ints(got1)
-	if !slices.Equal(got1, want) {
-		t.Errorf("Keys(%v) = %v, want %v", m1, got1, want)
-	}
-
-	got2 := Keys(m2)
-	sort.Ints(got2)
-	if !slices.Equal(got2, want) {
-		t.Errorf("Keys(%v) = %v, want %v", m2, got2, want)
 	}
 }
 

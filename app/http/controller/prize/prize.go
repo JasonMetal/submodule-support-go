@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"idea-go/app/http/controller"
 	"idea-go/app/logic/prize"
-	"strconv"
 )
 
 type prizeController struct {
@@ -19,12 +18,9 @@ func NewPrizeController(ctx *gin.Context) *prizeController {
 
 func (p *prizeController) GetList() {
 	prizeLogic := prize.NewPrizeLogic(p.GCtx)
-	rid, err := strconv.ParseInt(p.GetQueryDefault("rid", "0").Val, 10, 32)
-	if err != nil {
-		rid = 0
-	}
+	rid := p.GetRoundId()
 
-	ranking := prizeLogic.GetPrizeList(uint32(rid))
+	ranking := prizeLogic.GetPrizeList(rid)
 	p.Success(ranking)
 }
 

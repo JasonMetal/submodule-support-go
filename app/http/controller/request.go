@@ -14,10 +14,6 @@ type Request struct {
 	Val  string
 }
 
-type Number interface {
-	~int
-}
-
 func NewRequest(ctx *gin.Context) Request {
 	return Request{GCtx: ctx}
 }
@@ -52,13 +48,13 @@ func (req Request) Bool() bool {
 	return b
 }
 
-func (req Request) ShouldBindQuery(obj interface{}) {
+func (req Request) ShouldBindQuery(obj any) {
 	_ = req.GCtx.ShouldBindQuery(obj)
 }
 
 // ShouldBindJSON 使用注意，只能获取一次，无法重复获取
 // ShouldBindWith for better performance if you need to call only once.
-func (req Request) ShouldBindJSON(obj interface{}) {
+func (req Request) ShouldBindJSON(obj any) {
 	_ = req.GCtx.ShouldBindJSON(obj)
 }
 
@@ -66,7 +62,7 @@ func (req Request) IsMimeJson() bool {
 	return req.GCtx.ContentType() == binding.MIMEJSON
 }
 
-func (req Request) PostToModel(obj interface{}) Request {
+func (req Request) PostToModel(obj any) Request {
 	if req.IsMimeJson() {
 		_ = req.GCtx.ShouldBindBodyWith(obj, binding.JSON)
 	} else {
@@ -86,4 +82,13 @@ func (req Request) GetAllParamsFromUrl() map[string]string {
 	}
 
 	return reqParams
+}
+
+func (req Request) GetRoundId() uint32 {
+	rid, err := strconv.ParseInt(req.GCtx.GetString("id"), 10, 32)
+	if err != nil {
+		rid = 0
+	}
+
+	return uint32(rid)
 }

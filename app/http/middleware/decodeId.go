@@ -8,12 +8,11 @@ import (
 // ParseRoundId 解析round_id
 func ParseRoundId() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		roundId := 0
+		roundId := "0"
 		encryptId := c.GetHeader("encryptid")
 		if encryptId != "" {
-
 			encryptId = strLib.Base64Decode(encryptId)
-			//strings.Cut()
+			roundId = strLib.SubStr(encryptId, 0, 10)
 		}
 		c.Set("id", roundId)
 		c.Next()

@@ -15,10 +15,13 @@ import (
 )
 
 const (
-	LOG_DEBUG_LEVEL_ENABLE   = true //日志的debug是否开启
-	LOG_DEBUG_LEVEL_DISABLE  = false
-	ONLINE_SERVICE_HOST_PORT = ":50051"
-	HTTP_TIMEOUT_HANDLER     = 10 * time.Second //TimeoutHandler默认的http超时时间，http响应时间超过后直接返回client端503(不同项目可根据接口最大超时时间调整)
+	OnlineServiceHostPort = ":50051"
+	HttpTimeoutHandler    = 10 * time.Second //TimeoutHandler默认的http超时时间，http响应时间超过后直接返回client端503(不同项目可根据接口最大超时时间调整)
+	EnvLocal              = "local"
+	EnvTest               = "test"
+	EnvBVT                = "bvt"
+	EnvProduct            = "product"
+	EnvBenchmark          = "benchmark"
 )
 
 type coreCtx struct {
@@ -41,6 +44,8 @@ var (
 func Init() {
 	initEnv()
 
+	InitLogger()
+
 	InitMysql()
 
 	InitRedis()
@@ -50,7 +55,7 @@ func Init() {
 
 func initEnv() {
 	flag.Usage = Usage
-	flag.StringVar(&DevEnv, "e", "local", "Specify env")
+	flag.StringVar(&DevEnv, "e", EnvLocal, "Specify env")
 	flag.StringVar(&TestConfig, "t", "./config", "Specify config path for testing")
 	flag.Parse()
 }
@@ -59,12 +64,12 @@ func InitWeb() *gin.Engine {
 
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
-
+	r.Use(Logger())
 	r.Use(gin.Recovery())
 	r.Use(ControlCors())
 	//
 	//r.Use(middleware.CheckSign())
-	if DevEnv == "local" || DevEnv == "benchmark" {
+	if DevEnv == EnvLocal || DevEnv == EnvBenchmark {
 		c := make(chan os.Signal, 1)
 		signal.Notify(c, os.Interrupt)
 		signal.Notify(c, syscall.SIGKILL)
@@ -86,23 +91,23 @@ func Usage() {
 }
 
 func RunWeb(r *gin.Engine, addr string) {
-	if DevEnv == "local" || DevEnv == "benchmark" {
+	if DevEnv == EnvLocal || DevEnv == EnvBenchmark {
 		fmt.Println("local http start on " + addr)
 		//router.Run(addr)
 	} else {
-		fmt.Println("http start on " + ONLINE_SERVICE_HOST_PORT)
-		addr = ONLINE_SERVICE_HOST_PORT
+		fmt.Println("http start on " + OnlineServiceHostPort)
+		addr = OnlineServiceHostPort
 		//router.Run(core.ONLINE_SERVICE_HOST_PORT)
 	}
 	s := &http.Server{
 		Addr: addr,
 		Handler: http.TimeoutHandler(
 			r,
-			HTTP_TIMEOUT_HANDLER,
+			HttpTimeoutHandler,
 			"server has gone away",
 		),
-		ReadTimeout:  HTTP_TIMEOUT_HANDLER,
-		WriteTimeout: HTTP_TIMEOUT_HANDLER,
+		ReadTimeout:  HttpTimeoutHandler,
+		WriteTimeout: HttpTimeoutHandler,
 		IdleTimeout:  1 * time.Minute,
 		//MaxHeaderBytes: 1 << 20,
 	}
@@ -136,7 +141,7 @@ func ControlCors() gin.HandlerFunc {
 
 func CheckError(err error) error {
 	if err != nil {
-		if DevEnv == "local" {
+		if DevEnv == EnvLocal {
 			CoreCtx.Logger.Error(err.Error(), zap.String("type", "system"))
 			//} else {
 			//	SyncUDPLog(LogStruct{

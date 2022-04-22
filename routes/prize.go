@@ -8,11 +8,11 @@ import (
 
 func RegisterPrize(router *gin.Engine) {
 
-	prizeRoute := router.Group("/v2")
+	prizeRoute := router.Group("/v2/prize")
 	{
 		// 使用中间件
-		prizeRouteWithMiddleware := prizeRoute.Use(middleware.ParseRoundId())
-		prizeRouteWithMiddleware.GET("/getPrizeList", func(ctx *gin.Context) {
+		prizeRoute.Use(middleware.ParseRoundId())
+		prizeRoute.GET("/getPrizeList", func(ctx *gin.Context) {
 			prize.NewPrizeController(ctx).GetList()
 		})
 
