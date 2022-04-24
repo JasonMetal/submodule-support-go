@@ -57,10 +57,10 @@ func Send(request Request) (resp Response, err error) {
 		req.Header.Add(k, v)
 	}
 	response, err := client.Do(req)
-	defer response.Body.Close()
 	if err != nil {
 		return resp, err
 	}
+	defer response.Body.Close()
 	resp.Status = response.Status
 	resp.StatusCode = response.StatusCode
 	body, err := io.ReadAll(response.Body)
