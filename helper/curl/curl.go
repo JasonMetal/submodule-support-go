@@ -26,18 +26,22 @@ type Response struct {
 	Body       []byte
 }
 
+// Get HTTP GET 请求
 func Get(req Request) (resp Response, err error) {
 	req.Method = "GET"
-	return Send(req)
+	return send(req)
 }
 
+// POST HTTP POST 请求
 func Post(req Request) (resp Response, err error) {
 	req.Method = "POST"
-	return Send(req)
+	return send(req)
 }
 
-func Send(request Request) (resp Response, err error) {
+// send 发送请求
+func send(request Request) (resp Response, err error) {
 	var client = initClient(request)
+
 	//请求超时时间设置
 	var requestTimeout time.Duration = 5
 	if request.ReqTimeOut > 0 {
@@ -76,7 +80,7 @@ func Send(request Request) (resp Response, err error) {
 
 }
 
-// 格式化url
+// HttpBuildQuery 格式化url会按照字母进行排序
 func HttpBuildQuery(params map[string]string) string {
 	var uri url.URL
 	q := uri.Query()
@@ -87,93 +91,7 @@ func HttpBuildQuery(params map[string]string) string {
 	return queryStr
 }
 
-/*func CallPostInfo(url string, data interface{}, headers map[string]string, timeout time.Duration) ([]byte, int, error) {
-	urlParse, _ := urlParse.Parse(url)
-	if timeout == 0 {
-		timeout = 5 * time.Second
-		postNotSetTimeoutNum.CounterWithLabelValues(urlParse.Host, urlParse.Path).Inc()
-	}
-
-	var req *http.Request
-	var err error
-
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
-
-	switch v := data.(type) {
-	case string:
-		req, err = http.NewRequestWithContext(ctx, "POST", url, strings.NewReader(v))
-	case []byte:
-		req, err = http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(v))
-	default:
-		s, err := json.Marshal(v)
-		if err != nil {
-			core.ErrorLogDetail(core.LogStruct{
-				Err:       err,
-				ErrType:   "httpPost",
-				NeedStack: false,
-				ErrLevel:  "error",
-				ErrInfo:   map[string]interface{}{"url": url, "body": data},
-				Metrics:   "",
-			})
-
-			return nil, 0, err
-		}
-
-		req, err = http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(s))
-	}
-
-	if err != nil {
-		postMakeRequestFailNum.CounterWithLabelValues(urlParse.Host, urlParse.Path).Inc()
-		return nil, 0, err
-	}
-	defer req.Body.Close()
-
-	for k, v := range headers {
-		req.Header.Add(k, v)
-	}
-
-	postRequestNum.CounterWithLabelValues(urlParse.Host, urlParse.Path).Inc()
-	startTime := time.Now().UnixNano()
-	resp, err := client.Do(req)
-	execTime := float64(time.Now().UnixNano()-startTime) / float64(time.Millisecond)
-	postCallTime.CounterWithLabelValues(urlParse.Host, urlParse.Path).Add(execTime)
-
-	if err != nil {
-		postCallFailNum.CounterWithLabelValues(urlParse.Host, urlParse.Path).Inc()
-		//log.Println("url:", url, "err:", err, "body:", data)
-		core.ErrorLogDetail(core.LogStruct{
-			Err:       err,
-			ErrType:   "httpPost",
-			NeedStack: false,
-			ErrLevel:  "error",
-			ErrInfo:   map[string]interface{}{"url": url, "body": data},
-			Metrics:   "",
-		})
-
-		return nil, 0, err
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		postReadBodyFailNum.CounterWithLabelValues(urlParse.Host, urlParse.Path).Inc()
-		//log.Println("url:", url, "err:", err, "body:", body)
-		core.ErrorLogDetail(core.LogStruct{
-			Err:       err,
-			ErrType:   "httpPost",
-			NeedStack: false,
-			ErrLevel:  "error",
-			ErrInfo:   map[string]interface{}{"url": url, "body": data},
-			Metrics:   "",
-		})
-	}
-
-	return body, resp.StatusCode, err
-}
-*/
-
-//设置body 肉体
+// setBodyData 设置body
 func setBodyData(bodyData interface{}) io.Reader {
 	var data io.Reader
 	switch v := bodyData.(type) {
@@ -187,6 +105,7 @@ func setBodyData(bodyData interface{}) io.Reader {
 	return data
 }
 
+// initClient 获取HTTP.Client实例
 func initClient(request Request) (client http.Client) {
 	// 忽略 https 证书校验
 	var responseheadertimeout time.Duration = 0
@@ -197,12 +116,13 @@ func initClient(request Request) (client http.Client) {
 		TLSClientConfig: &tls.Config{
 			InsecureSkipVerify: true,
 		},
-		MaxIdleConns:        0,
-		MaxIdleConnsPerHost: 400,
-		IdleConnTimeout:     30 * time.Second,
-		//DisableKeepAlives:   true,
+		MaxIdleConns:          0,
+		MaxIdleConnsPerHost:   400,
+		IdleConnTimeout:       30 * time.Second,
 		ResponseHeaderTimeout: responseheadertimeout,
 	}
+
 	client = http.Client{Transport: transport}
+
 	return client
 }
