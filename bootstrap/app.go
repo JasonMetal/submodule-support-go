@@ -64,7 +64,8 @@ func InitWeb() *gin.Engine {
 
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
-	r.Use(Logger())
+
+	r.Use(SetLogger())
 	r.Use(gin.Recovery())
 	r.Use(ControlCors())
 	//
