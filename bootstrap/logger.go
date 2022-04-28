@@ -7,66 +7,142 @@ import (
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
 	"idea-go/helper/config"
+	"idea-go/helper/logger"
 	"time"
 )
 
-var zLog *zap.Logger
+type loggerConfig struct {
+	Level      string
+	LogType    string
+	LogPath    string
+	Filename   string
+	MaxSize    int
+	MaxBackups int
+	MaxAge     int
+	Compress   bool
+}
 
 func InitLogger() {
-	writeSyncer := getLogWriter()
-	encoder := getEncoderCfg()
-	zCore := zapcore.NewCore(encoder, writeSyncer, zap.InfoLevel)
-
-	zLog = zap.New(zCore, zap.AddCaller())
-	zap.ReplaceGlobals(zLog) // 替换zap包中全局的logger实例，后续在其他包中只需使用zap.L()调用即可
-
-	return
-}
-
-func getEncoderCfg() zapcore.Encoder {
-	encoderCfg := zap.NewDevelopmentEncoderConfig()
-
-	if DevEnv == EnvProduct {
-		encoderCfg = zap.NewProductionEncoderConfig()
-	}
-	encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
-	encoderCfg.TimeKey = "time"
-	encoderCfg.EncodeLevel = zapcore.CapitalLevelEncoder
-	encoderCfg.EncodeDuration = zapcore.SecondsDurationEncoder
-	encoderCfg.EncodeCaller = zapcore.ShortCallerEncoder
-
-	return zapcore.NewJSONEncoder(encoderCfg)
-
-}
-
-// getLogWriter 设置zap writer
-func getLogWriter() zapcore.WriteSyncer {
 	path := fmt.Sprintf("./config/%s/logger.yml", DevEnv)
 
 	cfg, err := config.GetConfig(path)
 	if err != nil {
 		fmt.Printf("init logger writer err")
-		return nil
+		return
 	}
+
 	filename, _ := cfg.String("logger.filename")
 	maxSize, _ := cfg.Int("logger.maxSize")
 	maxBackup, _ := cfg.Int("logger.maxBackup")
 	maxAge, _ := cfg.Int("logger.maxAge")
 	compress, _ := cfg.Bool("logger.compress")
+	logType, _ := cfg.String("logger.logType")
+	level, _ := cfg.String("logger.level")
+	logPath, _ := cfg.String("logger.logPath")
 
-	lumberJackLogger := &lumberjack.Logger{
-		Filename:   filename,  // 日志文件路径
-		MaxSize:    maxSize,   // megabytes
-		MaxBackups: maxBackup, // 最多保留3个备份
-		MaxAge:     maxAge,    //days
-		Compress:   compress,  // 是否压缩 disabled by default
+	logcfg := &loggerConfig{
+		Level:      level,
+		LogType:    logType,
+		LogPath:    logPath,
+		Filename:   filename,
+		MaxSize:    maxSize,
+		MaxBackups: maxBackup,
+		MaxAge:     maxAge,
+		Compress:   compress,
+	}
+	// 获取日志写入介质
+	writeSyncer := getLogWriter(logcfg)
+	// 设置日志等级，具体请见 config/logger.yml 文件
+	logLevel := new(zapcore.Level)
+	if err := logLevel.UnmarshalText([]byte(level)); err != nil {
+		fmt.Println("日志初始化错误，日志级别设置有误。请修改 config/logger.yml 文件中的 logger.level 配置项")
 	}
 
-	return zapcore.AddSync(lumberJackLogger)
+	// 初始化 core
+	core := zapcore.NewCore(getEncoder(), writeSyncer, logLevel)
+
+	// 初始化 Logger
+	Logger := zap.New(core,
+		zap.AddCaller(),                   // 调用文件和行号，内部使用 runtime.Caller
+		zap.AddCallerSkip(1),              // 封装了一层，调用文件去除一层(runtime.Caller(1))
+		zap.AddStacktrace(zap.ErrorLevel), // Error 时才会显示 stacktrace
+	)
+
+	// 将自定义的 logger 替换为全局的 logger
+	logger.SetLogger(Logger)
+
+	// zap.L().Fatal() 调用时，就会使用我们自定的 Logger
+	zap.ReplaceGlobals(Logger)
+
+	return
 }
 
-// Logger 接收gin框架默认的日志
-func Logger() gin.HandlerFunc {
+// getEncoder 设置日志存储格式
+func getEncoder() zapcore.Encoder {
+
+	// 日志格式规则
+	encoderConfig := zapcore.EncoderConfig{
+		TimeKey:        "time",
+		LevelKey:       "level",
+		NameKey:        "logger",
+		CallerKey:      "caller", // 代码调用，如 paginator/paginator.go:148
+		FunctionKey:    zapcore.OmitKey,
+		MessageKey:     "message",
+		StacktraceKey:  "stacktrace",
+		LineEnding:     zapcore.DefaultLineEnding,      // 每行日志的结尾添加 "\n"
+		EncodeLevel:    zapcore.CapitalLevelEncoder,    // 日志级别名称大写，如 ERROR、INFO
+		EncodeTime:     customTimeEncoder,              // 时间格式，我们自定义为 2006-01-02 15:04:05
+		EncodeDuration: zapcore.SecondsDurationEncoder, // 执行时间，以秒为单位
+		EncodeCaller:   zapcore.ShortCallerEncoder,     // Caller 短格式，如：types/converter.go:17，长格式为绝对路径
+	}
+
+	// 本地环境配置
+	if DevEnv == EnvLocal {
+		// 终端输出的关键词高亮
+		encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+		// 本地设置内置的 Console 解码器（支持 stacktrace 换行）
+		return zapcore.NewConsoleEncoder(encoderConfig)
+	}
+
+	// 线上环境使用 JSON 编码器
+	return zapcore.NewJSONEncoder(encoderConfig)
+}
+
+// customTimeEncoder 自定义友好的时间格式
+func customTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
+	enc.AppendString(t.Format("2006-01-02 15:04:05"))
+}
+
+// getLogWriter 日志记录介质
+func getLogWriter(logcfg *loggerConfig) zapcore.WriteSyncer {
+	filename := logcfg.Filename
+	// 按照日期记录日志文件
+	if logcfg.LogType == "daily" {
+		filename = logcfg.LogPath + time.Now().Format("2006-01-02.log")
+	}
+
+	// 滚动日志，详见 config/logger.yml
+	lumberJackLogger := &lumberjack.Logger{
+		Filename:   filename,
+		MaxSize:    logcfg.MaxSize,
+		MaxBackups: logcfg.MaxBackups,
+		MaxAge:     logcfg.MaxAge,
+		Compress:   logcfg.Compress,
+	}
+	// 配置输出介质
+	if DevEnv == EnvLocal {
+		// 本地开发终端打印和记录文件
+		//return zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(lumberJackLogger))
+		return zapcore.AddSync(lumberJackLogger)
+
+	} else {
+		// 生产环境只记录文件
+		return zapcore.AddSync(lumberJackLogger)
+	}
+}
+
+// SetLogger 接收gin框架默认的日志
+func SetLogger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
 		path := c.Request.URL.Path
@@ -74,7 +150,7 @@ func Logger() gin.HandlerFunc {
 		c.Next()
 
 		cost := time.Since(start)
-		zLog.Info(path,
+		logger.Info(path,
 			zap.Int("status", c.Writer.Status()),
 			zap.String("method", c.Request.Method),
 			zap.String("path", path),
