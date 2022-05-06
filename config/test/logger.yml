@@ -1,8 +1,9 @@
 logger:
-  level: "info" # 正式环境配置成error
+  level: "debug"  # 正式环境配置成error
   logType: "daily" # 文件名
-  filename: "/var/log/go/run.log"   # 日志文件路径
-  maxSize: 100   # megabytes
-  maxBackups: 3 # 最多保留3个备份
-  maxAge: 30    #days
-  compress: true # 是否压缩 disabled by default,压缩方法 gzip
+  logPath: "/var/log/"
+  filename: "run.log"  # 日志文件路径
+  maxSize: 100  # megabytes
+  maxBackups: 3  # 最多保留3个备份
+  maxAge: 30  #days
+  compress: true  # 是否压缩 disabled by default,压缩方法 gzip

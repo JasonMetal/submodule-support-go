@@ -50,7 +50,7 @@ func Init() {
 
 	InitRedis()
 
-	// InitGrpc()
+	InitGrpc()
 }
 
 func initEnv() {
@@ -68,6 +68,7 @@ func InitWeb() *gin.Engine {
 	r.Use(SetLogger())
 	r.Use(gin.Recovery())
 	r.Use(ControlCors())
+
 	//
 	//r.Use(middleware.CheckSign())
 	if DevEnv == EnvLocal || DevEnv == EnvBenchmark {
