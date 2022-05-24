@@ -1,35 +1,31 @@
 package bootstrap
 
 import (
+	"fmt"
 	"github.com/gomodule/redigo/redis"
 	yCfg "github.com/olebedev/config"
 	"idea-go/helper/config"
+	redisHelper "idea-go/helper/redis"
 	"os"
 	"time"
 )
 
-type RedisInstance struct {
-	DSN  string
-	Pool *redis.Pool
-}
-
-var redisPoolList = make(map[string][]RedisInstance)
-
 func InitRedis() {
 	dbList := getDbNames("redis")
 	for _, dbname := range dbList {
-		instance, err := initRedisPool(dbname)
+		instances, err := initRedisPool(dbname)
 		if err == nil {
-			redisPoolList[dbname] = instance
+			redisHelper.SetRedisInstance(dbname, instances)
 		}
 	}
 
 	//go closePool()
 }
 
-func initRedisPool(dbName string) ([]RedisInstance, error) {
+func initRedisPool(dbName string) ([]redisHelper.RedisInstance, error) {
+	path := fmt.Sprintf("%sconfig/%s/redis.yml", ProjectPath(), DevEnv)
 
-	cfg, err := config.GetConfig("redis")
+	cfg, err := config.GetConfig(path)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +38,7 @@ func initRedisPool(dbName string) ([]RedisInstance, error) {
 	if err != nil {
 		return nil, err
 	}
-	redisPools := make([]RedisInstance, len(servers))
+	redisPools := make([]redisHelper.RedisInstance, len(servers))
 	for k, v := range servers {
 		address, _ := yCfg.Get(v, "address")
 		passwd, _ := yCfg.Get(v, "passwd")
@@ -52,9 +48,9 @@ func initRedisPool(dbName string) ([]RedisInstance, error) {
 		}
 
 		// 建立连接池
-		redisPools[k] = RedisInstance{
-			address.(string),
-			&redis.Pool{
+		redisPools[k] = redisHelper.RedisInstance{
+			DSN: address.(string),
+			Pool: &redis.Pool{
 				MaxIdle:     maxIdle,
 				MaxActive:   maxActive,
 				IdleTimeout: time.Duration(idleTimeout) * time.Second,

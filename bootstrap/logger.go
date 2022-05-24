@@ -89,11 +89,11 @@ func getEncoder() zapcore.Encoder {
 		FunctionKey:    zapcore.OmitKey,
 		MessageKey:     "message",
 		StacktraceKey:  "stacktrace",
-		LineEnding:     zapcore.DefaultLineEnding,      // 每行日志的结尾添加 "\n"
-		EncodeLevel:    zapcore.CapitalLevelEncoder,    // 日志级别名称大写，如 ERROR、INFO
-		EncodeTime:     customTimeEncoder,              // 时间格式，我们自定义为 2006-01-02 15:04:05
-		EncodeDuration: zapcore.SecondsDurationEncoder, // 执行时间，以秒为单位
-		EncodeCaller:   zapcore.ShortCallerEncoder,     // Caller 短格式，如：types/converter.go:17，长格式为绝对路径
+		LineEnding:     zapcore.DefaultLineEnding,     // 每行日志的结尾添加 "\n"
+		EncodeLevel:    zapcore.CapitalLevelEncoder,   // 日志级别名称大写，如 ERROR、INFO
+		EncodeTime:     customTimeEncoder,             // 时间格式，我们自定义为 2006-01-02 15:04:05
+		EncodeDuration: zapcore.MillisDurationEncoder, // 执行时间，以秒为单位
+		EncodeCaller:   zapcore.ShortCallerEncoder,    // Caller 短格式，如：types/converter.go:17，长格式为绝对路径
 	}
 
 	// 本地环境配置

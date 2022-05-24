@@ -1,19 +1,13 @@
 mysql:
-  manyideacloud:
+  creator_platform:
     maxOpenConns: 50 #设置空闲连接池中的最大连接数
     maxIdleConns: 3 #设置空闲连接池中的最大连接数。
     maxLifetime: 240 #设置可重用连接的最长时间 0不限制
-    tablePrefix: aikehou_ #表前缀
     debug: true
     charset: utf8mb4
     servers:
       - host: 159.75.208.79
         port: 3306
-        db: manyideacloud
-        user: root
-        passwd: Duoxiang88
-      - host: 159.75.208.80
-        port: 3306
-        db: manyideacloudtest
+        db: creator_platform
         user: root
         passwd: Duoxiang88

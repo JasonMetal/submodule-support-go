@@ -11,10 +11,9 @@ type Config struct {
 
 func getDbNames(filename string) []string {
 	DbNames := make([]string, 0)
-	path := fmt.Sprintf("./config/%s/%s.yml", DevEnv, filename)
+	path := fmt.Sprintf("%sconfig/%s/%s.yml", ProjectPath(), DevEnv, filename)
 
 	DBConfigs, err := config.GetConfig(path)
-
 	configList, err := DBConfigs.Map(filename)
 	if err == nil {
 		for DBName, _ := range configList {

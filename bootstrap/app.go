@@ -1,6 +1,7 @@
 package bootstrap
 
 import (
+	"bytes"
 	"context"
 	"flag"
 	"fmt"
@@ -9,7 +10,10 @@ import (
 	"idea-go/helper/logger"
 	"net/http"
 	"os"
+	"os/exec"
 	"os/signal"
+	"runtime"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -51,6 +55,10 @@ func Init() {
 	InitRedis()
 
 	InitGrpc()
+
+	InitSts()
+
+	InitSms()
 }
 
 func initEnv() {
@@ -136,7 +144,21 @@ func gracefulShutdown(server *http.Server) {
 // ControlCors 设置CORS
 func ControlCors() gin.HandlerFunc {
 	return func(context *gin.Context) {
+		method := context.Request.Method
+		origin := context.Request.Header.Get("Origin")
 
+		if strings.Contains(origin, "*.manyidea.cloud") {
+			context.Header("Access-Control-Allow-Origin", origin)
+			context.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")
+			context.Header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+			context.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Cache-Control, Content-Language, Content-Type")
+			context.Header("Access-Control-Allow-Credentials", "true")
+
+			if method == "OPTIONS" {
+				context.AbortWithStatus(http.StatusNoContent)
+				return
+			}
+		}
 		context.Next()
 	}
 }
@@ -144,7 +166,8 @@ func ControlCors() gin.HandlerFunc {
 func CheckError(err error) error {
 	if err != nil {
 		if DevEnv == EnvLocal {
-			CoreCtx.Logger.Error(err.Error(), zap.String("type", "system"))
+
+			logger.Error(err.Error(), zap.String("type", "system"))
 			//} else {
 			//	SyncUDPLog(LogStruct{
 			//		Err:       err,
@@ -160,4 +183,44 @@ func CheckError(err error) error {
 	}
 
 	return nil
+}
+
+func ProjectPath() (path string) {
+	// default linux/mac os
+	var (
+		sp = "/"
+		ss []string
+	)
+	if runtime.GOOS == "windows" {
+		sp = "\\"
+	}
+
+	// GOMOD
+	// in go source code:
+	// // Check for use of modules by 'go env GOMOD',
+	// // which reports a go.mod file path if modules are enabled.
+	// stdout, _ := exec.Command("go", "env", "GOMOD").Output()
+	// gomod := string(bytes.TrimSpace(stdout))
+	stdout, _ := exec.Command("go", "env", "GOMOD").Output()
+	path = string(bytes.TrimSpace(stdout))
+	if path != "" {
+		ss = strings.Split(path, sp)
+		ss = ss[:len(ss)-1]
+		path = strings.Join(ss, sp) + sp
+		return
+	}
+
+	// GOPATH
+	fileDir, _ := os.Getwd()
+	path = os.Getenv("GOPATH") // < go 1.17 use
+	ss = strings.Split(fileDir, path)
+	if path != "" {
+		ss2 := strings.Split(ss[1], sp)
+		path += sp
+		for i := 1; i < len(ss2); i++ {
+			path += ss2[i] + sp
+			return path
+		}
+	}
+	return
 }

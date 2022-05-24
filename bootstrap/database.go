@@ -47,7 +47,7 @@ func mysqlLogger() logger.Interface {
 }
 
 func initDbConn(dbName string) (MysqlInstance, error) {
-	path := fmt.Sprintf("./config/%s/mysql.yml", DevEnv)
+	path := fmt.Sprintf("%sconfig/%s/mysql.yml", ProjectPath(), DevEnv)
 
 	cfg, err := config.GetConfig(path)
 
@@ -95,7 +95,8 @@ func initDbConn(dbName string) (MysqlInstance, error) {
 	db, err := gorm.Open(mysql.Open(addr), &gorm.Config{
 		Logger: mysqlLogger(),
 		NamingStrategy: schema.NamingStrategy{
-			TablePrefix: tablePrefix,
+			TablePrefix:   tablePrefix,
+			SingularTable: true,
 		},
 	})
 
