@@ -22,7 +22,7 @@ func InitSms() {
 
 // 初始化默认配置
 func initDefaultConfig() {
-	path := fmt.Sprintf("./config/%s/sms.yml", DevEnv)
+	path := fmt.Sprintf("%sconfig/%s/sms.yml", ProjectPath(), DevEnv)
 	smsConfigs, err := config.GetConfig(path)
 	if err == nil {
 		/* 必要步骤：
