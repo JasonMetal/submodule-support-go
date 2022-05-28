@@ -2,10 +2,10 @@ package bootstrap
 
 import (
 	"fmt"
+	"gitee.com/DXTeam/idea-go.git/helper/config"
+	redisHelper "gitee.com/DXTeam/idea-go.git/helper/redis"
 	"github.com/gomodule/redigo/redis"
 	yCfg "github.com/olebedev/config"
-	"idea-go/helper/config"
-	redisHelper "idea-go/helper/redis"
 	"os"
 	"time"
 )

@@ -5,9 +5,9 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"gitee.com/DXTeam/idea-go.git/helper/logger"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"idea-go/helper/logger"
 	"net/http"
 	"os"
 	"os/exec"
@@ -68,7 +68,7 @@ func initEnv() {
 	flag.Parse()
 }
 
-func InitWeb() *gin.Engine {
+func InitWeb(funs []gin.HandlerFunc) *gin.Engine {
 
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
@@ -77,8 +77,11 @@ func InitWeb() *gin.Engine {
 	r.Use(gin.Recovery())
 	r.Use(ControlCors())
 
+	for _, v := range funs {
+		r.Use(v)
+	}
 	//
-	//r.Use(middleware.CheckSign())
+
 	if DevEnv == EnvLocal || DevEnv == EnvBenchmark {
 		c := make(chan os.Signal, 1)
 		signal.Notify(c, os.Interrupt)

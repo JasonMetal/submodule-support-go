@@ -1,11 +1,11 @@
 package jwt
 
 import (
+	"creator-platform-api/app/constant"
+	"creator-platform-api/app/entity"
+	"creator-platform-api/helper/strings"
 	"errors"
-	"golang.org/x/oauth2/jwt"
-	"idea-go/app/constant"
-	"idea-go/app/entity"
-	"idea-go/helper/strings"
+	"github.com/golang-jwt/jwt/v4"
 	"time"
 )
 

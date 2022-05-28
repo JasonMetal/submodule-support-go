@@ -3,7 +3,7 @@ package bootstrap
 
 import (
 	"fmt"
-	"idea-go/helper/config"
+	"gitee.com/DXTeam/idea-go.git/helper/config"
 )
 
 type Config struct {

@@ -2,10 +2,10 @@ package bootstrap
 
 import (
 	"fmt"
+	"gitee.com/DXTeam/idea-go.git/helper/config"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	sms "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms/v20210111"
-	"idea-go/helper/config"
 )
 
 type TencentSms struct {

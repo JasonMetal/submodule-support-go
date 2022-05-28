@@ -2,8 +2,9 @@ package tencentcloud
 
 import (
 	"context"
+	"gitee.com/DXTeam/idea-go.git/bootstrap"
+	"github.com/tencentyun/cos-go-sdk-v5"
 	"github.com/tencentyun/cos-go-sdk-v5/debug"
-	"idea-go/bootstrap"
 	"net/http"
 	"net/url"
 	"os"

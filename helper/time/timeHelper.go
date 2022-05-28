@@ -81,3 +81,11 @@ func RfcToLocalDatetime(rfcTime string) (string, error) {
 
 	return t.Format(layout), err
 }
+
+
+// func RfcToLocalDatetime(rfcTime string) (string, error) {
+// 	layout := "2006-01-02 15:04:05"
+// 	t, err := time.Parse(time.RFC3339, rfcTime)
+
+// 	return t.Format(layout), err
+// }

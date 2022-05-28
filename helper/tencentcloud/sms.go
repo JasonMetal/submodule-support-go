@@ -3,8 +3,9 @@ package tencentcloud
 import (
 	"encoding/json"
 	"errors"
+	"gitee.com/DXTeam/idea-go.git/bootstrap"
+	"gitee.com/DXTeam/idea-go.git/helper/slices"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
-	"idea-go/bootstrap"
 	"strings"
 )
 
@@ -38,6 +39,8 @@ func (s *SmsParams) Send() (b []byte, err error) {
 		}
 		s.Mobile[key] = c.MobileCode + value
 	}
+	//去重手机号
+	s.Mobile = slices.Unique(s.Mobile)
 	// 处理模板参数
 	if len(s.TemplateParams) > 0 {
 		c.Request.TemplateParamSet = common.StringPtrs(s.TemplateParams)

@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"context"
+	"gitee.com/DXTeam/idea-go.git/helper/number"
 	"github.com/gin-gonic/gin"
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpcRecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
@@ -11,7 +12,6 @@ import (
 	_ "google.golang.org/grpc/encoding/gzip"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/metadata"
-	"idea-go/helper/number"
 	"time"
 )
 

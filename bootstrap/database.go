@@ -3,12 +3,12 @@ package bootstrap
 import (
 	"errors"
 	"fmt"
+	"gitee.com/DXTeam/idea-go.git/helper/config"
 	yCfg "github.com/olebedev/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
-	"idea-go/helper/config"
 	"log"
 	"os"
 	"time"

@@ -1,9 +1,10 @@
 package tencentcloud
 
 import (
+	"gitee.com/DXTeam/idea-go.git/bootstrap"
+	"gitee.com/DXTeam/idea-go.git/entity"
+
 	sts "github.com/tencentyun/qcloud-cos-sts-sdk/go"
-	"idea-go/app/entity"
-	"idea-go/bootstrap"
 )
 
 // GetToken 获取STS临时授权

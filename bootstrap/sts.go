@@ -2,8 +2,8 @@ package bootstrap
 
 import (
 	"fmt"
+	"gitee.com/DXTeam/idea-go.git/helper/config"
 	sts "github.com/tencentyun/qcloud-cos-sts-sdk/go"
-	"idea-go/helper/config"
 )
 
 type StsClient struct {

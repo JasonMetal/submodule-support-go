@@ -2,12 +2,12 @@ package bootstrap
 
 import (
 	"fmt"
+	"gitee.com/DXTeam/idea-go.git/helper/config"
+	"gitee.com/DXTeam/idea-go.git/helper/logger"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"idea-go/helper/config"
-	"idea-go/helper/logger"
 	"time"
 )
 
@@ -148,7 +148,6 @@ func SetLogger() gin.HandlerFunc {
 		path := c.Request.URL.Path
 		query := c.Request.URL.RawQuery
 		c.Next()
-
 		cost := time.Since(start)
 		logger.Info(path,
 			zap.Int("status", c.Writer.Status()),
@@ -160,5 +159,6 @@ func SetLogger() gin.HandlerFunc {
 			zap.String("errors", c.Errors.ByType(gin.ErrorTypePrivate).String()),
 			zap.Duration("cost", cost),
 		)
+
 	}
 }

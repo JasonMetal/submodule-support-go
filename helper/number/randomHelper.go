@@ -35,5 +35,5 @@ func GenerateSpanId(length int) string {
 		result[i] = str[r.Intn(61)]
 	}
 
-	return fmt.Sprintf("%x", string(result))
+	return fmt.Sprintf("%s", string(result))
 }

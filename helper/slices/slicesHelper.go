@@ -1,6 +1,6 @@
 package slices
 
-import "idea-go/helper/constraints"
+import "creator-platform-api/helper/constraints"
 
 // Index returns the index of the first occurrence of v in s,
 // or -1 if not present.
@@ -53,4 +53,14 @@ func Equal[E comparable](s1, s2 []E) bool {
 		}
 	}
 	return true
+}
+
+func Unique[M ~[]K, K comparable](m M) []K {
+	r := make([]K, 0)
+	for _, val := range m {
+		if !Contains(r, val) {
+			r = append(r, val)
+		}
+	}
+	return r
 }
