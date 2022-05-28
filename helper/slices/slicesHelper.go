@@ -1,6 +1,6 @@
 package slices
 
-import "creator-platform-api/helper/constraints"
+import "gitee.com/DXTeam/idea-go.git/helper/constraints"
 
 // Index returns the index of the first occurrence of v in s,
 // or -1 if not present.

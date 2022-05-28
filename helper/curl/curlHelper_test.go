@@ -2,8 +2,8 @@ package curl
 
 import (
 	"bytes"
-	strLib "creator-platform-api/helper/strings"
 	"crypto/tls"
+	strLib "gitee.com/DXTeam/idea-go.git/helper/strings"
 	"io"
 	"net/http"
 	"reflect"

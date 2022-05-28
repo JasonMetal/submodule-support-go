@@ -2,10 +2,10 @@ package redis
 
 import (
 	"context"
-	"creator-platform-api/helper/logger"
-	"creator-platform-api/helper/number"
 	"encoding/json"
 	"errors"
+	"gitee.com/DXTeam/idea-go.git/helper/logger"
+	"gitee.com/DXTeam/idea-go.git/helper/number"
 	"github.com/gomodule/redigo/redis"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
