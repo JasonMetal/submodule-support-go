@@ -89,7 +89,7 @@ func InitGrpc() {
 	path := fmt.Sprintf("%sconfig/%s/grpc.yml", ProjectPath(), DevEnv)
 	cfg, err := config.GetConfig(path)
 	if err != nil {
-
+		panic("init grpc err")
 	}
 	servers, err := cfg.List("server")
 	for _, v := range servers {
