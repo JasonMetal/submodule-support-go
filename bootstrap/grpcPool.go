@@ -86,7 +86,7 @@ var grpcConnPool map[string]Pool
 func InitGrpc() {
 	var endpoints = make(map[string]GrpcEndpoint)
 
-	path := fmt.Sprintf("./config/%s/grpc.yml", DevEnv)
+	path := fmt.Sprintf("%s/config/%s/grpc.yml",ProjectPath(), DevEnv)
 	cfg, err := config.GetConfig(path)
 	if err != nil {
 

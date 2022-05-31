@@ -23,7 +23,7 @@ type loggerConfig struct {
 }
 
 func InitLogger() {
-	path := fmt.Sprintf("./config/%s/logger.yml", DevEnv)
+	path := fmt.Sprintf("%s/config/%s/logger.yml",ProjectPath(), DevEnv)
 
 	cfg, err := config.GetConfig(path)
 	if err != nil {
