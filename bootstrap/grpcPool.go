@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"gitee.com/DXTeam/idea-go.git/helper/config"
-	grpcRetry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
+	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	yCfg "github.com/olebedev/config"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
@@ -86,7 +86,7 @@ var grpcConnPool map[string]Pool
 func InitGrpc() {
 	var endpoints = make(map[string]GrpcEndpoint)
 
-	path := fmt.Sprintf("%s/config/%s/grpc.yml",ProjectPath(), DevEnv)
+	path := fmt.Sprintf("%sconfig/%s/grpc.yml", ProjectPath(), DevEnv)
 	cfg, err := config.GetConfig(path)
 	if err != nil {
 
@@ -329,11 +329,11 @@ func NewPool(endpoints map[string]GrpcEndpoint) map[string]Pool {
 }
 
 func newConn(endpoint string, timeout time.Duration) (*grpc.ClientConn, error) {
-	retryOpts := []grpcRetry.CallOption{
+	retryOpts := []grpc_retry.CallOption{
 		//grpc_retry.WithCodes(codes.Canceled, codes.DataLoss, codes.Unavailable),
-		grpcRetry.WithCodes(codes.DataLoss, codes.Unavailable),
-		grpcRetry.WithMax(3),
-		grpcRetry.WithBackoff(grpcRetry.BackoffExponential(100 * time.Millisecond)),
+		grpc_retry.WithCodes(codes.DataLoss, codes.Unavailable),
+		grpc_retry.WithMax(3),
+		grpc_retry.WithBackoff(grpc_retry.BackoffExponential(100 * time.Millisecond)),
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
@@ -349,7 +349,7 @@ func newConn(endpoint string, timeout time.Duration) (*grpc.ClientConn, error) {
 		grpc.WithUnaryInterceptor(grpc_middleware.ChainUnaryClient(
 			//grpc_opentracing.UnaryClientInterceptor(),
 			TimeoutUnaryClientInterceptor(timeout),
-			grpcRetry.UnaryClientInterceptor(retryOpts...),
+			grpc_retry.UnaryClientInterceptor(retryOpts...),
 			RPCConnectMonitor(),
 			//grpc_prometheus.GetGrpcClientMetrics().UnaryClientInterceptor(),
 		)),
