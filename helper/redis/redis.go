@@ -210,3 +210,11 @@ func (r *RedisInstance) getConn(retryTimes int) (redis.Conn, error) {
 func (r *RedisInstance) GetString(ctx context.Context, key string) (string, error) {
 	return redis.String(r.Do(ctx, "GET", key))
 }
+
+func (r *RedisInstance) SetString(ctx context.Context, key string, value string) (string, error) {
+	return redis.String(r.Do(ctx, "SET", key, value))
+}
+
+func (r *RedisInstance) Ttl(ctx context.Context, key string) (int64, error) {
+	return redis.Int64(r.Do(ctx, "TTL", key))
+}
