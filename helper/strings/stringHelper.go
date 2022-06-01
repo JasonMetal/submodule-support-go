@@ -1,6 +1,7 @@
 package strings
 
 import (
+	"github.com/techoner/gophp/serialize"
 	"reflect"
 	"unsafe"
 )
@@ -57,4 +58,13 @@ func SubStr(str string, offset int, length int) string {
 	}
 
 	return ""
+}
+
+// UnSerialize 反序列化
+func UnSerialize(str string) interface{} {
+	out, _ := serialize.UnMarshal([]byte(str))
+	if out == nil {
+		return ""
+	}
+	return out
 }
