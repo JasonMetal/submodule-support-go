@@ -40,6 +40,7 @@ func initDefault() {
 				Client:          c,
 				Region:          region,
 				DurationSeconds: durationSeconds,
+				BucketName:      fmt.Sprintf("%s-%s", bucketName, appId),
 			}
 		}
 	}
