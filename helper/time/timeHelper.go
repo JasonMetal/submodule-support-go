@@ -82,6 +82,12 @@ func RfcToLocalDatetime(rfcTime string) (string, error) {
 	return t.Format(layout), err
 }
 
+// FormatRfcToLayout  rfc时间格式化成指定的格式
+func FormatRfcToLayout(rfcTime, layout string) (string, error) {
+	t, err := time.Parse(time.RFC3339, rfcTime)
+
+	return t.Format(layout), err
+}
 
 // func RfcToLocalDatetime(rfcTime string) (string, error) {
 // 	layout := "2006-01-02 15:04:05"
