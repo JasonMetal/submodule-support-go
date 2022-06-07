@@ -31,7 +31,7 @@ func initDefault() {
 			secretId, _ := stsConfigs.String("tencentyun." + bucketName + ".secretId")
 			secretKey, _ := stsConfigs.String("tencentyun." + bucketName + ".secretKey")
 			appId, _ := stsConfigs.String("tencentyun." + bucketName + ".appId")
-			region, _ := stsConfigs.String("tencentyun." + bucketName + ".region")
+			region, _ := stsConfigs.String("tencentyun." + bucketName + ".Region")
 			durationSeconds, _ := stsConfigs.Int("tencentyun." + bucketName + ".durationSeconds")
 
 			c := sts.NewClient(secretId, secretKey, nil)
