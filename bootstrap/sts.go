@@ -12,6 +12,7 @@ type StsClient struct {
 	Region          string
 	BucketName      string
 	DurationSeconds int
+	Bucket          string
 }
 
 var StsClientList = make(map[string]StsClient)
@@ -27,20 +28,21 @@ func initDefault() {
 
 	configList, err := stsConfigs.Map("tencentyun")
 	if err == nil {
-		for bucketName, _ := range configList {
-			secretId, _ := stsConfigs.String("tencentyun." + bucketName + ".secretId")
-			secretKey, _ := stsConfigs.String("tencentyun." + bucketName + ".secretKey")
-			appId, _ := stsConfigs.String("tencentyun." + bucketName + ".appId")
-			region, _ := stsConfigs.String("tencentyun." + bucketName + ".Region")
-			durationSeconds, _ := stsConfigs.Int("tencentyun." + bucketName + ".durationSeconds")
-
+		for project, _ := range configList {
+			secretId, _ := stsConfigs.String("tencentyun." + project + ".secretId")
+			secretKey, _ := stsConfigs.String("tencentyun." + project + ".secretKey")
+			appId, _ := stsConfigs.String("tencentyun." + project + ".appId")
+			region, _ := stsConfigs.String("tencentyun." + project + ".Region")
+			durationSeconds, _ := stsConfigs.Int("tencentyun." + project + ".durationSeconds")
+			bucketName, _ := stsConfigs.String("tencentyun." + project + ".bucket")
 			c := sts.NewClient(secretId, secretKey, nil)
-			StsClientList[bucketName] = StsClient{
+			StsClientList[project] = StsClient{
 				AppId:           appId,
 				Client:          c,
 				Region:          region,
 				DurationSeconds: durationSeconds,
 				BucketName:      fmt.Sprintf("%s-%s", bucketName, appId),
+				Bucket:          bucketName,
 			}
 		}
 	}
