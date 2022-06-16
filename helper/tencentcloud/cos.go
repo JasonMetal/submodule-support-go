@@ -22,7 +22,7 @@ func IsExist(object, bucket, region string) bool {
 	})
 	_, err := c.Object.Head(context.Background(), object, nil)
 	if err != nil {
-		bootstrap.CheckError(err)
+		bootstrap.CheckError(err, "cos")
 	}
 
 	return rs

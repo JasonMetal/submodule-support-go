@@ -19,7 +19,7 @@ func GetToken(project string, objectNameList []string) (entity.StsToken, error) 
 		}
 		res, err := c.Client.GetCredential(opt)
 		if err != nil {
-			bootstrap.CheckError(err)
+			bootstrap.CheckError(err, "sts")
 
 			return token, err
 		}

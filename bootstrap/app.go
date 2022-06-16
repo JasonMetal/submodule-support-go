@@ -166,21 +166,10 @@ func ControlCors() gin.HandlerFunc {
 	}
 }
 
-func CheckError(err error) error {
+func CheckError(err error, errType string) error {
 	if err != nil {
-		if DevEnv == EnvLocal {
 
-			logger.Error(err.Error(), zap.String("type", "system"))
-			//} else {
-			//	SyncUDPLog(LogStruct{
-			//		Err:       err,
-			//		ErrType:   "error",
-			//		NeedStack: true,
-			//		ErrLevel:  "error",
-			//		ErrInfo:   nil,
-			//		Metrics:   "",
-			//	})
-		}
+		logger.Error(err.Error(), zap.String("type", errType))
 
 		return err
 	}
