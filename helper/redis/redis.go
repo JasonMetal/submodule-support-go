@@ -133,8 +133,16 @@ func (r *RedisInstance) Incr(ctx context.Context, key string) (val int64, err er
 	return redis.Int64(r.Do(ctx, "INCR", key))
 }
 
+func (r *RedisInstance) IncrBy(ctx context.Context, key string, incrAmount int) (val int64, err error) {
+	return redis.Int64(r.Do(ctx, "INCRBY", key, incrAmount))
+}
+
 func (r *RedisInstance) Decr(ctx context.Context, key string) (val int64, err error) {
 	return redis.Int64(r.Do(ctx, "DECR", key))
+}
+
+func (r *RedisInstance) DecrBy(ctx context.Context, key string, decrAmount int) (val int64, err error) {
+	return redis.Int64(r.Do(ctx, "DECRBY", key, decrAmount))
 }
 
 // Lpop 用法：Lpop("key")
