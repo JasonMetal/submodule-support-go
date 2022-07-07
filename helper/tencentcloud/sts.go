@@ -30,6 +30,7 @@ func GetToken(project string, objectNameList []string) (entity.StsToken, error) 
 			SessionToken: res.Credentials.SessionToken,
 			Bucket:       c.BucketName,
 			Region:       c.Region,
+			Domain:       c.Domain,
 		}
 	}
 
