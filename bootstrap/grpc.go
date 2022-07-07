@@ -140,6 +140,7 @@ func RunServer(s *grpc.Server, addr string) {
 		if err != nil {
 			os.Exit(1)
 		}
+		fmt.Println("local grpc start on " + addr)
 
 		go s.Serve(l)
 		gracefulGrpcShutdown(s)
@@ -161,8 +162,7 @@ func gracefulGrpcShutdown(s *grpc.Server) {
 	if getSignal == syscall.SIGTERM || getSignal == syscall.SIGQUIT || getSignal == syscall.SIGINT {
 
 		logger.Debug("grpc", zap.NamedError("shutdown", errors.New("grpc server shutdown, handle signal "+fmt.Sprint(getSignal))))
-
-		time.Sleep(2 * time.Minute)
+		time.Sleep(3 * time.Second)
 	}
 	s.GracefulStop()
 	s.Stop()
