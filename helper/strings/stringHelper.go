@@ -1,6 +1,8 @@
 package strings
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"github.com/techoner/gophp/serialize"
 	"reflect"
 	"unsafe"
@@ -67,4 +69,11 @@ func UnSerialize(str string) interface{} {
 		return ""
 	}
 	return out
+}
+
+func Md5(data string) string {
+	hash := md5.New()
+	hash.Write([]byte(data))
+
+	return hex.EncodeToString(hash.Sum(nil))
 }

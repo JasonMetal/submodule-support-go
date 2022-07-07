@@ -7,4 +7,5 @@ type StsToken struct {
 	FileList     []string `json:"file_list"`
 	Bucket       string   `json:"bucket"`
 	Region       string   `json:"region"`
+	Domain       string   `json:"domain"`
 }
