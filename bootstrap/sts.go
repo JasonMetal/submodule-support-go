@@ -13,6 +13,7 @@ type StsClient struct {
 	BucketName      string
 	DurationSeconds int
 	Bucket          string
+	Domain          string
 }
 
 var StsClientList = make(map[string]StsClient)
@@ -35,6 +36,7 @@ func initDefault() {
 			region, _ := stsConfigs.String("tencentyun." + project + ".Region")
 			durationSeconds, _ := stsConfigs.Int("tencentyun." + project + ".durationSeconds")
 			bucketName, _ := stsConfigs.String("tencentyun." + project + ".bucket")
+			domain, _ := stsConfigs.String("tencentyun." + project + ".domain")
 			c := sts.NewClient(secretId, secretKey, nil)
 			StsClientList[project] = StsClient{
 				AppId:           appId,
@@ -43,6 +45,7 @@ func initDefault() {
 				DurationSeconds: durationSeconds,
 				BucketName:      fmt.Sprintf("%s-%s", bucketName, appId),
 				Bucket:          bucketName,
+				Domain:          domain,
 			}
 		}
 	}
