@@ -5,9 +5,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"gitee.com/DXTeam/idea-go.git/helper/logger"
-	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 	"net/http"
 	"os"
 	"os/exec"
@@ -16,6 +13,10 @@ import (
 	"strings"
 	"syscall"
 	"time"
+
+	"gitee.com/DXTeam/idea-go.git/helper/logger"
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 const (
@@ -154,7 +155,7 @@ func ControlCors() gin.HandlerFunc {
 			context.Header("Access-Control-Allow-Origin", origin)
 			context.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")
 			context.Header("Access-Control-Allow-Headers", "*")
-			context.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Cache-Control, Content-Language, Content-Type")
+			context.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Cache-Control, Content-Language, Content-Type, admintoken")
 			context.Header("Access-Control-Allow-Credentials", "true")
 
 			if method == "OPTIONS" {
