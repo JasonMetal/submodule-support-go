@@ -38,10 +38,11 @@ type coreCtx struct {
 }
 
 var (
-	CoreCtx    coreCtx
-	err        error
-	DevEnv     string
-	TestConfig string
+	CoreCtx     coreCtx
+	err         error
+	DevEnv      string
+	TestConfig  string
+	ProjectName string
 )
 
 //var grpcConnPool map[string]http2.Pool
@@ -60,6 +61,14 @@ func Init() {
 	InitSts()
 
 	InitSms()
+}
+
+func SetProjectName(name string) {
+	ProjectName = name
+}
+
+func GetProjectName() string {
+	return ProjectName
 }
 
 func initEnv() {

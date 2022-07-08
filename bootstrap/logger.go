@@ -38,7 +38,6 @@ func InitLogger() {
 	logType, _ := cfg.String("logger.logType")
 	level, _ := cfg.String("logger.level")
 	logPath, _ := cfg.String("logger.logPath")
-
 	logcfg := &loggerConfig{
 		Level:      level,
 		LogType:    logType,
@@ -117,7 +116,7 @@ func getLogWriter(logcfg *loggerConfig) zapcore.WriteSyncer {
 	filename := logcfg.Filename
 	// 按照日期记录日志文件
 	if logcfg.LogType == "daily" {
-		filename = logcfg.LogPath + time.Now().Format("2006-01-02.log")
+		filename = logcfg.LogPath + GetProjectName() + "-" + time.Now().Format("2006-01-02.log")
 	}
 
 	// 滚动日志，详见 config/logger.yml
