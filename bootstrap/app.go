@@ -58,7 +58,7 @@ func Init() {
 
 	InitGrpc()
 
-	InitSts()
+//	InitSts()
 
 	InitSms()
 }
