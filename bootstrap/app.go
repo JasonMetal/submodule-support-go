@@ -58,9 +58,9 @@ func Init() {
 
 	InitGrpc()
 
-//	InitSts()
+	// InitSts()
 
-	InitSms()
+	// InitSms()
 }
 
 func SetProjectName(name string) {
@@ -82,15 +82,14 @@ func InitWeb(funs []gin.HandlerFunc) *gin.Engine {
 
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
-
 	r.Use(SetLogger())
-	r.Use(gin.Recovery())
+	r.Use(LogRecovery())
+	//r.Use(gin.Recovery())
 	r.Use(ControlCors())
 
 	for _, v := range funs {
 		r.Use(v)
 	}
-	//
 
 	if DevEnv == EnvLocal || DevEnv == EnvBenchmark {
 		c := make(chan os.Signal, 1)
