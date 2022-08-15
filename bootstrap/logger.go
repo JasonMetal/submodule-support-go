@@ -61,7 +61,8 @@ func InitLogger() {
 	if err := logLevel.UnmarshalText([]byte(level)); err != nil {
 		fmt.Println("日志初始化错误，日志级别设置有误。请修改 config/logger.yml 文件中的 logger.level 配置项")
 	}
-
+	//初始化错误等级
+	_ = logLevel.Set(level)
 	// 初始化 core
 	core := zapcore.NewCore(getEncoder(), writeSyncer, logLevel)
 
