@@ -21,6 +21,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -125,10 +126,14 @@ func RunServer(s *grpc.Server, addr string) {
 	fmt.Println("local grpc start on " + addr)
 
 	go s.Serve(l)
-
+	port := 0
 	address := os.Getenv("HOST_IP")
+	hostPort := os.Getenv("HOST_PORT")
+	if hostPort != "" {
+		port, _ = strconv.Atoi(hostPort)
+	}
 	// 将当前grpc服务注册到consul
-	err = RegisterGRPCServiceConsul(address, 50052, []string{GetProjectName()})
+	err = RegisterGRPCServiceConsul(address, port, []string{GetProjectName()})
 	if err != nil {
 		logger.Error("grpc", zap.NamedError("grpc", errors.New("grpc register error "+err.Error())))
 	}
