@@ -196,8 +196,9 @@ func RegisterGRPCServiceConsul(address string, port int, tags []string) error {
 		DeregisterCriticalServiceAfter: "30s", // 失败多久后注销服务
 	}
 	// 生成注册对象
+	serverName := fmt.Sprintf("%s-%s", DevEnv, GetProjectName())
 	registration := &api.AgentServiceRegistration{
-		Name:    GetProjectName(),
+		Name:    serverName,
 		ID:      serviceId,
 		Address: address,
 		Port:    port,
