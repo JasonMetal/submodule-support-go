@@ -10,6 +10,8 @@ import (
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpcRecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpcOpentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
+	"github.com/hashicorp/consul/api"
+	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	_ "google.golang.org/grpc/encoding/gzip"
@@ -19,10 +21,14 @@ import (
 	"net"
 	"os"
 	"os/signal"
-	"runtime"
+	"strings"
 	"syscall"
 	"time"
 )
+
+var consulAddress = "dxconsul.coolnull.com"
+var consulClient *api.Client
+var serviceId string
 
 func NewGrpcServer() *grpc.Server {
 	// TODO 定义grpc监控指标
@@ -108,44 +114,37 @@ func RunServer(s *grpc.Server, addr string) {
 	// register reflection
 	registerGrpcReflection(s)
 
-	if runtime.GOOS == "windows" {
-		l, err := net.Listen("tcp", addr)
-		if err != nil {
-			logger.Error("grpc", zap.NamedError("grpc", errors.New("grpc error"+err.Error())))
-		}
-
-		if err != nil {
-			os.Exit(1)
-		}
-
-		go s.Serve(l)
-		gracefulGrpcShutdown(s)
-	} else {
-		// todo 后面加入jpillora/oversee平滑重启
-
-		//overseer.Run(overseer.Config{
-		//	//Debug:            true,
-		//	TerminateTimeout: 120 * time.Second,
-		//	Program: func(state overseer.State) {
-		//		s.Serve(state.Listener)
-		//	},
-		//	Address: addr,
-		//})
-
-		l, err := net.Listen("tcp", addr)
-		if err != nil {
-			logger.Error("grpc", zap.NamedError("grpc", errors.New("grpc error"+err.Error())))
-		}
-
-		if err != nil {
-			os.Exit(1)
-		}
-		fmt.Println("local grpc start on " + addr)
-
-		go s.Serve(l)
-		gracefulGrpcShutdown(s)
-
+	l, err := net.Listen("tcp", addr)
+	if err != nil {
+		logger.Error("grpc", zap.NamedError("grpc", errors.New("grpc error"+err.Error())))
 	}
+
+	if err != nil {
+		os.Exit(1)
+	}
+	fmt.Println("local grpc start on " + addr)
+
+	go s.Serve(l)
+
+	address := os.Getenv("HOST_IP")
+	// 将当前grpc服务注册到consul
+	err = RegisterGRPCServiceConsul(address, 50052, []string{GetProjectName()})
+	if err != nil {
+		logger.Error("grpc", zap.NamedError("grpc", errors.New("grpc register error "+err.Error())))
+	}
+	gracefulGrpcShutdown(s)
+}
+
+func getLocalIp() string {
+	conn, err := net.Dial("udp", "183.60.83.19:53")
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+	localAddr := conn.LocalAddr().(*net.UDPAddr)
+
+	return strings.Split(localAddr.String(), ":")[0]
+
 }
 
 // registerGrpcReflection 用户本地调试
@@ -166,5 +165,44 @@ func gracefulGrpcShutdown(s *grpc.Server) {
 	}
 	s.GracefulStop()
 	s.Stop()
+	if consulClient != nil {
+		consulClient.Agent().ServiceDeregister(serviceId)
+	}
+
 	os.Exit(0)
+}
+
+// RegisterGRPCServiceConsul 注册服务到consul
+func RegisterGRPCServiceConsul(address string, port int, tags []string) error {
+	serviceId = uuid.NewV4().String()
+	cfg := api.DefaultConfig()
+	cfg.Address = fmt.Sprintf("%s:%d", consulAddress, 8500)
+	consulClient, err = api.NewClient(cfg)
+	if err != nil {
+		logger.Error("grpc", zap.NamedError("grpc", errors.New("grpc register to consul error "+err.Error())))
+	}
+
+	// 生成健康检查对象
+	check := &api.AgentServiceCheck{
+		GRPC: fmt.Sprintf("%s:%d", address, port), // 服务的运行地址,ip不可以是127.0.0.1
+
+		Timeout:                        "3s",  // 超过此时间说明服务状态不健康
+		Interval:                       "5s",  // 每5s检查一次
+		DeregisterCriticalServiceAfter: "30s", // 失败多久后注销服务
+	}
+	// 生成注册对象
+	registration := &api.AgentServiceRegistration{
+		Name:    GetProjectName(),
+		ID:      serviceId,
+		Address: address,
+		Port:    port,
+		Tags:    tags,
+		Check:   check,
+	}
+
+	// 注册服务
+	err = consulClient.Agent().ServiceRegister(registration)
+
+	return err
+
 }
