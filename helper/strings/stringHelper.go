@@ -71,6 +71,15 @@ func UnSerialize(str string) interface{} {
 	return out
 }
 
+// Serialize 序列化
+func Serialize(data interface{}) ([]byte, error) {
+	out, err := serialize.Marshal(data)
+	if out == nil {
+		return nil, err
+	}
+	return out, err
+}
+
 func Md5(data string) string {
 	hash := md5.New()
 	hash.Write([]byte(data))
