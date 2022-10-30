@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"gitee.com/DXTeam/idea-go.git/helper/config"
 	redisHelper "gitee.com/DXTeam/idea-go.git/helper/redis"
-	"github.com/gomodule/redigo/redis"
+	"github.com/go-redis/redis/v8"
 	yCfg "github.com/olebedev/config"
 	"os"
 	"time"
 )
+
+type RedisClient struct {
+	Client *redis.Client
+}
 
 func InitRedis() {
 	dbList := getDbNames("redis")
@@ -30,7 +34,7 @@ func initRedisPool(dbName string) ([]redisHelper.RedisInstance, error) {
 		return nil, err
 	}
 
-	maxIdle, _ := cfg.Int("redis." + dbName + ".maxIdle")
+	//maxIdle, _ := cfg.Int("redis." + dbName + ".maxIdle")
 	maxActive, _ := cfg.Int("redis." + dbName + ".maxActive")
 	idleTimeout, _ := cfg.Int("redis." + dbName + ".idleTimeout")
 
@@ -47,36 +51,21 @@ func initRedisPool(dbName string) ([]redisHelper.RedisInstance, error) {
 			os.Exit(1)
 		}
 
-		// 建立连接池
+		// 建立连接
+		rds := &RedisClient{}
+		// 使用默认的 context
+
+		// 使用 redis 库里的 NewClient 初始化连接
+		rds.Client = redis.NewClient(&redis.Options{
+			Addr:        address.(string),
+			Password:    passwd.(string),
+			PoolSize:    maxActive,
+			IdleTimeout: time.Duration(idleTimeout) * time.Second,
+		})
 		redisPools[k] = redisHelper.RedisInstance{
-			DSN: address.(string),
-			Pool: &redis.Pool{
-				MaxIdle:     maxIdle,
-				MaxActive:   maxActive,
-				IdleTimeout: time.Duration(idleTimeout) * time.Second,
-				Dial: func() (redis.Conn, error) {
-					c, err := redis.Dial("tcp", address.(string),
-						redis.DialReadTimeout(time.Duration(100)*time.Millisecond),
-						redis.DialWriteTimeout(time.Duration(100)*time.Millisecond),
-						redis.DialConnectTimeout(time.Duration(1000)*time.Millisecond),
-					)
-					if err != nil {
+			Client: rds.Client,
+		}
 
-						return nil, err
-					}
-
-					if passwd != nil {
-						if _, err := c.Do("AUTH", passwd); err != nil {
-
-							c.Close()
-
-							return nil, err
-						}
-					}
-
-					return c, nil
-				},
-			}}
 	}
 
 	return redisPools, nil
