@@ -6,7 +6,7 @@ import (
 	"errors"
 	"gitee.com/DXTeam/idea-go.git/helper/logger"
 	"gitee.com/DXTeam/idea-go.git/helper/number"
-	"github.com/gomodule/redigo/redis"
+	"github.com/go-redis/redis/v8"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 	"go.uber.org/zap"
