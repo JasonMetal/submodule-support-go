@@ -42,14 +42,12 @@ func SetRedisInstance(dbName string, instance []RedisInstance) {
 // Set 用法：Set("key", val, 60)，其中 expire 的单位为秒
 func (r *RedisInstance) Set(ctx context.Context, key string, val interface{}, expire int) (interface{}, error) {
 
-	return r.Client.Set(ctx, key, val, time.Duration(expire)).Result()
+	return r.Client.Set(ctx, key, val, time.Second*time.Duration(expire)).Result()
 }
-
-//func (r *RedisInstance) Set(ctx context.Context, key string, val interface{}, expire int,nx string) (interface{}, error) {
 
 func (r *RedisInstance) SetNx(ctx context.Context, key string, val interface{}, expire int) (interface{}, error) {
 
-	return r.Client.SetNX(ctx, key, val, time.Duration(expire)).Result()
+	return r.Client.SetNX(ctx, key, val, time.Second*time.Duration(expire)).Result()
 
 }
 
@@ -62,7 +60,7 @@ func (r *RedisInstance) Get(ctx context.Context, key string) (interface{}, error
 // cmd: set key value ex 3600 nx
 func (r *RedisInstance) SetNxEx(ctx context.Context, key string, val interface{}, expire int) (interface{}, error) {
 
-	return r.Client.SetEX(ctx, key, val, time.Duration(expire)).Result()
+	return r.Client.SetEX(ctx, key, val, time.Second*time.Duration(expire)).Result()
 }
 
 func (r *RedisInstance) Del(ctx context.Context, key string) error {
@@ -162,7 +160,7 @@ func (r *RedisInstance) Hincrby(ctx context.Context, key, field string, incrAmou
 
 // Expire 设置键过期时间，expire的单位为秒
 func (r *RedisInstance) Expire(ctx context.Context, key string, expire int) error {
-	_, err := r.Client.Expire(ctx, key, time.Duration(expire)).Result()
+	_, err := r.Client.Expire(ctx, key, time.Second*time.Duration(expire)).Result()
 	return err
 }
 
