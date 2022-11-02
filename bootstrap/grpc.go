@@ -5,8 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"gitee.com/DXTeam/idea-go.git/helper/logger"
-	"gitee.com/DXTeam/idea-go.git/helper/number"
-	"github.com/gin-gonic/gin"
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpcRecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpcOpentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
@@ -16,7 +14,6 @@ import (
 	"google.golang.org/grpc"
 	_ "google.golang.org/grpc/encoding/gzip"
 	"google.golang.org/grpc/keepalive"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/reflection"
 	"net"
 	"os"
@@ -62,7 +59,7 @@ func NewGrpcServer() *grpc.Server {
 	return s
 }
 
-func GetGrpcConn(ctx *gin.Context, name string) (*IdleConn, context.Context) {
+func GetGrpcConn(ctx context.Context, name string) (*IdleConn, context.Context) {
 	newCtx := setTraceCtx(ctx)
 	conn, err := grpcConnPool[name].Get()
 	if err == nil {
@@ -77,32 +74,32 @@ func PutGrpcConn(name string, conn *IdleConn) {
 }
 
 // setTraceCtx 设置trace_id, span_id等信息
-func setTraceCtx(ctx *gin.Context) context.Context {
-	var ctxMD context.Context
-
-	requestId := ctx.GetHeader("x-request-id")
-
-	traceId := ctx.GetHeader("X-B3-TraceId")
-	spanId := ctx.GetHeader("X-B3-SpanId")
-	//parentSpanId := ctx.GetHeader("x-b3-parentspanid")
-	sampled := ctx.GetHeader("X-B3-Sampled")
-
-	if sampled == "1" && traceId != "" {
-		number.GenerateTraceId()
-		md := metadata.Pairs("X-B3-Sampled", sampled,
-			"x-request-id", requestId,
-			"X-B3-TraceId", traceId,
-			"X-B3-SpanId", number.GenerateSpanId(8),
-			"X-B3-ParentSpanId", spanId,
-			"x-b3-sampled", sampled,
-			"x-b3-flags", ctx.GetHeader("x-b3-flags"),
-			"x-ot-span-context", ctx.GetHeader("x-ot-span-context"),
-			//"X-B3-ProjectId", ctx.GetHeader("X-B3-ProjectId"),
-		)
-		ctxMD = metadata.NewOutgoingContext(context.Background(), md)
-	} else {
-		ctxMD = context.Background()
-	}
+func setTraceCtx(ctx context.Context) context.Context {
+	var ctxMD = ctx
+	//
+	//requestId := ctx.Value("x-request-id")
+	//
+	//traceId := ctx.Value("X-B3-TraceId")
+	//spanId := ctx.Value("X-B3-SpanId")
+	////parentSpanId := ctx.GetHeader("x-b3-parentspanid")
+	//sampled := ctx.Value("X-B3-Sampled")
+	//
+	//if sampled == "1" && traceId != "" {
+	//	number.GenerateTraceId()
+	//	md := metadata.Pairs("X-B3-Sampled", sampled.(string),
+	//		"x-request-id", requestId.(string),
+	//		"X-B3-TraceId", traceId.(string),
+	//		"X-B3-SpanId", number.GenerateSpanId(8),
+	//		"X-B3-ParentSpanId", spanId.(string),
+	//		"x-b3-sampled", sampled.(string),
+	//		"x-b3-flags", ctx.Value("x-b3-flags").(string),
+	//		"x-ot-span-context", ctx.Value("x-ot-span-context").(string),
+	//		//"X-B3-ProjectId", ctx.GetHeader("X-B3-ProjectId"),
+	//	)
+	//	ctxMD = metadata.NewOutgoingContext(context.Background(), md)
+	//} else {
+	//	ctxMD = context.Background()
+	//}
 
 	return ctxMD
 }
