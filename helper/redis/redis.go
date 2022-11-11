@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/go-redis/redis/v8"
 	"time"
+
+	"github.com/go-redis/redis/v8"
 
 	"gitee.com/DXTeam/idea-go.git/helper/number"
 )
@@ -118,10 +119,10 @@ func (r *RedisInstance) Zadd(ctx context.Context, key string, score float64, mem
 	return r.Client.ZAdd(ctx, key, mem).Result()
 }
 
-func (r *RedisInstance) Zrangebyscore(ctx context.Context, key string, start, stop int64) ([]string, error) {
+func (r *RedisInstance) Zrangebyscore(ctx context.Context, key, min, max string) ([]string, error) {
 	opt := &redis.ZRangeBy{
-		Offset: start,
-		Count:  stop,
+		Min: min,
+		Max: max,
 	}
 	return r.Client.ZRangeByScore(ctx, key, opt).Result()
 }
