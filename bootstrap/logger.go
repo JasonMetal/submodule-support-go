@@ -33,7 +33,7 @@ func InitLogger() {
 
 	cfg, err := config.GetConfig(path)
 	if err != nil {
-		panic("init logger err")
+		panic("init logger err" + err.Error())
 	}
 
 	filename, _ := cfg.String("logger.filename")
@@ -155,7 +155,7 @@ func SetLogger() gin.HandlerFunc {
 		c.Next()
 		cost := time.Since(start)
 		// 过滤健康检测
-		if c.Request.UserAgent() != "clb-healthcheck" {
+		if c.Request.UserAgent() != "clb-healthcheck" && path != "/ping" {
 			logger.Info(path,
 				zap.Int("status", c.Writer.Status()),
 				zap.String("method", c.Request.Method),
