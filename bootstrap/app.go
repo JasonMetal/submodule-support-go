@@ -204,6 +204,9 @@ func ProjectPath() (path string) {
 	// gomod := string(bytes.TrimSpace(stdout))
 	stdout, _ := exec.Command("go", "env", "GOMOD").Output()
 	path = string(bytes.TrimSpace(stdout))
+	if path == "/dev/null" {
+		return ""
+	}
 	if path != "" {
 		ss = strings.Split(path, sp)
 		ss = ss[:len(ss)-1]

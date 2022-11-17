@@ -3,7 +3,7 @@ package strings
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"github.com/techoner/gophp/serialize"
+	"github.com/leeqvip/gophp/serialize"
 	"reflect"
 	"unsafe"
 )
