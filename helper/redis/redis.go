@@ -4,9 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
-
 	"github.com/go-redis/redis/v8"
+	"time"
 
 	"gitee.com/DXTeam/idea-go.git/helper/number"
 )
@@ -41,25 +40,24 @@ func SetRedisInstance(dbName string, instance []RedisInstance) {
 }
 
 // Set 用法：Set("key", val, 60)，其中 expire 的单位为秒
-func (r *RedisInstance) Set(ctx context.Context, key string, val interface{}, expire int) (interface{}, error) {
+func (r *RedisInstance) Set(ctx context.Context, key string, val interface{}, expire int) (string, error) {
 
 	return r.Client.Set(ctx, key, val, time.Second*time.Duration(expire)).Result()
 }
 
-func (r *RedisInstance) SetNx(ctx context.Context, key string, val interface{}, expire int) (interface{}, error) {
+func (r *RedisInstance) SetNx(ctx context.Context, key string, val interface{}, expire int) (bool, error) {
 
 	return r.Client.SetNX(ctx, key, val, time.Second*time.Duration(expire)).Result()
-
 }
 
-func (r *RedisInstance) Get(ctx context.Context, key string) (interface{}, error) {
+func (r *RedisInstance) Get(ctx context.Context, key string) (string, error) {
 
 	return r.Client.Get(ctx, key).Result()
 }
 
 // SetNxEx exist set value + expires otherwise not do
 // cmd: set key value ex 3600 nx
-func (r *RedisInstance) SetNxEx(ctx context.Context, key string, val interface{}, expire int) (interface{}, error) {
+func (r *RedisInstance) SetNxEx(ctx context.Context, key string, val interface{}, expire int) (string, error) {
 
 	return r.Client.SetEX(ctx, key, val, time.Second*time.Duration(expire)).Result()
 }
@@ -69,19 +67,19 @@ func (r *RedisInstance) Del(ctx context.Context, key string) error {
 	return err
 }
 
-func (r *RedisInstance) Incr(ctx context.Context, key string) (val int64, err error) {
+func (r *RedisInstance) Incr(ctx context.Context, key string) (int64, error) {
 	return r.Client.Incr(ctx, key).Result()
 }
 
-func (r *RedisInstance) IncrBy(ctx context.Context, key string, incrAmount int64) (val int64, err error) {
-	return r.Client.IncrBy(ctx, key, val).Result()
+func (r *RedisInstance) IncrBy(ctx context.Context, key string, value int64) (int64, error) {
+	return r.Client.IncrBy(ctx, key, value).Result()
 }
 
-func (r *RedisInstance) Decr(ctx context.Context, key string) (val int64, err error) {
+func (r *RedisInstance) Decr(ctx context.Context, key string) (int64, error) {
 	return r.Client.Decr(ctx, key).Result()
 }
 
-func (r *RedisInstance) DecrBy(ctx context.Context, key string, decrAmount int64) (val int64, err error) {
+func (r *RedisInstance) DecrBy(ctx context.Context, key string, decrAmount int64) (int64, error) {
 	return r.Client.DecrBy(ctx, key, decrAmount).Result()
 }
 
@@ -111,6 +109,7 @@ func (r *RedisInstance) Lrem(ctx context.Context, key string, val interface{}, c
 }
 
 // 有序集合操作
+
 func (r *RedisInstance) Zadd(ctx context.Context, key string, score float64, member interface{}) (int64, error) {
 	mem := &redis.Z{
 		Score:  score,
@@ -144,7 +143,7 @@ func (r *RedisInstance) Hkeys(ctx context.Context, key string) ([]string, error)
 	return r.Client.HKeys(ctx, key).Result()
 }
 
-func (r *RedisInstance) Hset(ctx context.Context, key, field string, val interface{}) (interface{}, error) {
+func (r *RedisInstance) Hset(ctx context.Context, key, field string, val interface{}) (int64, error) {
 
 	return r.Client.HSet(ctx, key, field, val).Result()
 }
@@ -183,7 +182,7 @@ func (r *RedisInstance) Ttl(ctx context.Context, key string) (int64, error) {
 func (r *RedisInstance) SAdd(ctx context.Context, key string, value string) (int64, error) {
 	return r.Client.SAdd(ctx, key, value).Result()
 }
-func (r *RedisInstance) SMembers(ctx context.Context, key string) (interface{}, error) {
+func (r *RedisInstance) SMembers(ctx context.Context, key string) ([]string, error) {
 	return r.Client.SMembers(ctx, key).Result()
 }
 func (r *RedisInstance) SRANDMEMBER(ctx context.Context, key string) (string, error) {
@@ -191,7 +190,7 @@ func (r *RedisInstance) SRANDMEMBER(ctx context.Context, key string) (string, er
 	return r.Client.SRandMember(ctx, key).Result()
 }
 
-func (r *RedisInstance) Pub(ctx context.Context, channel string, msg string) (interface{}, error) {
+func (r *RedisInstance) Pub(ctx context.Context, channel string, msg string) (int64, error) {
 	return r.Client.Publish(ctx, channel, msg).Result()
 }
 
@@ -200,7 +199,6 @@ func (r *RedisInstance) Sub(ctx context.Context, consumeFunc func(data *redis.Me
 
 	psc := r.Client.Subscribe(ctx, channel)
 	if err := psc.Ping(ctx, ""); err != nil {
-		fmt.Println(err)
 		return err
 	}
 	done := make(chan error, 1)
@@ -208,7 +206,6 @@ func (r *RedisInstance) Sub(ctx context.Context, consumeFunc func(data *redis.Me
 
 		for {
 			rec, err := psc.ReceiveMessage(ctx)
-			fmt.Println(rec, err)
 			if err != nil {
 				return
 			}
@@ -224,18 +221,14 @@ func (r *RedisInstance) Sub(ctx context.Context, consumeFunc func(data *redis.Me
 	for {
 		select {
 		case <-ctx.Done():
-			fmt.Println("ctx.done")
 			if err := psc.Unsubscribe(ctx); err != nil {
-				fmt.Println(err)
 				return fmt.Errorf("redis pubsub unsubscribe err: %v", err)
 			}
 			return nil
 		case err := <-done:
-			fmt.Println("done")
 			return err
 		case <-ticker.C:
 			if err := psc.Ping(ctx); err != nil {
-				fmt.Printf("ping err:%v", err)
 
 				return err
 			}
@@ -243,3 +236,5 @@ func (r *RedisInstance) Sub(ctx context.Context, consumeFunc func(data *redis.Me
 	}
 
 }
+
+
