@@ -72,10 +72,15 @@ func GetProjectName() string {
 }
 
 func initEnv() {
-	flag.Usage = Usage
-	flag.StringVar(&DevEnv, "e", EnvLocal, "Specify env")
-	flag.StringVar(&TestConfig, "t", "./config", "Specify config path for testing")
-	flag.Parse()
+	// 优先获取系统环境变量
+	runEnv := os.Getenv("RUN_ENV")
+	if runEnv != "" {
+		DevEnv = runEnv
+	} else {
+		flag.Usage = Usage
+		flag.StringVar(&DevEnv, "e", EnvLocal, "Specify env")
+		flag.Parse()
+	}
 }
 
 func InitWeb(funs []gin.HandlerFunc) *gin.Engine {
