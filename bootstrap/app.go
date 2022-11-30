@@ -122,7 +122,7 @@ func RunWeb(r *gin.Engine, addr string) {
 		fmt.Println("local http start on " + addr)
 		//router.Run(addr)
 	} else {
-		fmt.Println("http start on " + OnlineServiceHostPort)
+		fmt.Printf("env:%s; http server listen on %s\n", DevEnv, OnlineServiceHostPort)
 		addr = OnlineServiceHostPort
 		//router.Run(core.ONLINE_SERVICE_HOST_PORT)
 	}
