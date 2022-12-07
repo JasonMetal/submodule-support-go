@@ -2,10 +2,12 @@ package redis
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/go-redis/redis/v8"
 	"time"
+
+	"github.com/gomodule/redigo/redis"
 
 	"gitee.com/DXTeam/idea-go.git/helper/number"
 )
@@ -58,8 +60,18 @@ func (r *RedisInstance) Get(ctx context.Context, key string) (string, error) {
 // SetNxEx exist set value + expires otherwise not do
 // cmd: set key value ex 3600 nx
 func (r *RedisInstance) SetNxEx(ctx context.Context, key string, val interface{}, expire int) (string, error) {
-
-	return r.Client.SetEX(ctx, key, val, time.Second*time.Duration(expire)).Result()
+	var value interface{}
+	switch v := val.(type) {
+	case string, int, uint, int8, int16, int32, int64, float32, float64, bool:
+		value = v
+	default:
+		b, err := json.Marshal(v)
+		if err != nil {
+			return "", err
+		}
+		value = string(b)
+	}
+	return r.Client.SetEX(ctx, key, value, time.Second*time.Duration(expire)).Result()
 }
 
 func (r *RedisInstance) Del(ctx context.Context, key string) error {
@@ -236,5 +248,3 @@ func (r *RedisInstance) Sub(ctx context.Context, consumeFunc func(data *redis.Me
 	}
 
 }
-
-
