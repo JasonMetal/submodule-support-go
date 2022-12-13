@@ -5,9 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"time"
-
-	"github.com/gomodule/redigo/redis"
 
 	"gitee.com/DXTeam/idea-go.git/helper/number"
 )
@@ -248,3 +247,4 @@ func (r *RedisInstance) Sub(ctx context.Context, consumeFunc func(data *redis.Me
 	}
 
 }
+
