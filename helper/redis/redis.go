@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/go-redis/redis/v8"
+	redis "github.com/go-redis/redis/v8"
 	"time"
 
 	"gitee.com/DXTeam/idea-go.git/helper/number"
