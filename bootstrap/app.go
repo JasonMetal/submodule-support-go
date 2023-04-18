@@ -14,7 +14,7 @@ import (
 	"syscall"
 	"time"
 
-	"gitee.com/DXTeam/idea-go.git/helper/logger"
+	"gitee.com/JasonMetal/submodule-idea-go.git/helper/logger"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -164,7 +164,7 @@ func ControlCors() gin.HandlerFunc {
 		method := context.Request.Method
 		origin := context.Request.Header.Get("Origin")
 
-		if strings.Contains(origin, "manyidea.cloud") || strings.Contains(origin, "localhost") {
+		if strings.Contains(origin, "sitename.cloud") || strings.Contains(origin, "localhost") {
 			context.Header("Access-Control-Allow-Origin", origin)
 			context.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")
 			context.Header("Access-Control-Allow-Headers", "*")

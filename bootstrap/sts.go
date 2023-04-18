@@ -2,7 +2,7 @@ package bootstrap
 
 import (
 	"fmt"
-	"gitee.com/DXTeam/idea-go.git/helper/config"
+	"gitee.com/JasonMetal/submodule-idea-go.git/helper/config"
 	sts "github.com/tencentyun/qcloud-cos-sts-sdk/go"
 )
 

@@ -3,7 +3,7 @@ package curl
 import (
 	"bytes"
 	"crypto/tls"
-	strLib "gitee.com/DXTeam/idea-go.git/helper/strings"
+	strLib "gitee.com/JasonMetal/submodule-idea-go.git/helper/strings"
 	"io"
 	"net/http"
 	"reflect"

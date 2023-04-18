@@ -14,7 +14,7 @@
 
 ### 地址
 
-[https://e.gitee.com/DXTeam/repos/DXTeam/idea-go](https://e.gitee.com/DXTeam/repos/DXTeam/idea-go)
+[https://gitee.com/JasonMetal/submodule-idea-go](https://gitee.com/JasonMetal/submodule-idea-go)
 
 ### 分支说明
 
@@ -68,7 +68,7 @@
 
 1. 拉取代码
     ```shell
-    git clone git@gitee.com:DXTeam/idea-go.git
+    git clone git@gitee.com:JasonMetal/submodule-idea-go.git
     ```
 
 

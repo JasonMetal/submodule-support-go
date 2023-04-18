@@ -8,7 +8,7 @@ import (
 	redis "github.com/go-redis/redis/v8"
 	"time"
 
-	"gitee.com/DXTeam/idea-go.git/helper/number"
+	"gitee.com/JasonMetal/submodule-idea-go.git/helper/number"
 )
 
 type RedisInstance struct {
@@ -247,4 +247,3 @@ func (r *RedisInstance) Sub(ctx context.Context, consumeFunc func(data *redis.Me
 	}
 
 }
-

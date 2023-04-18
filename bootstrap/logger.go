@@ -2,8 +2,8 @@ package bootstrap
 
 import (
 	"fmt"
-	"gitee.com/DXTeam/idea-go.git/helper/config"
-	"gitee.com/DXTeam/idea-go.git/helper/logger"
+	"gitee.com/JasonMetal/submodule-idea-go.git/helper/config"
+	"gitee.com/JasonMetal/submodule-idea-go.git/helper/logger"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"

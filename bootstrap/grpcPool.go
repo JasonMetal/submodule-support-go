@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gitee.com/DXTeam/idea-go.git/helper/config"
+	"gitee.com/JasonMetal/submodule-idea-go.git/helper/config"
 	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	yCfg "github.com/olebedev/config"
 	"google.golang.org/grpc/codes"

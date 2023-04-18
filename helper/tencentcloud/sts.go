@@ -2,8 +2,8 @@ package tencentcloud
 
 import (
 	"fmt"
-	"gitee.com/DXTeam/idea-go.git/bootstrap"
-	"gitee.com/DXTeam/idea-go.git/entity"
+	"gitee.com/JasonMetal/submodule-idea-go.git/bootstrap"
+	"gitee.com/JasonMetal/submodule-idea-go.git/entity"
 
 	sts "github.com/tencentyun/qcloud-cos-sts-sdk/go"
 )
