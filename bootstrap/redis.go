@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"gitee.com/DXTeam/idea-go.git/helper/config"
 	redisHelper "gitee.com/DXTeam/idea-go.git/helper/redis"
-	"github.com/go-redis/redis/v8"
+	redis "github.com/go-redis/redis/v8"
 	yCfg "github.com/olebedev/config"
 	"os"
 	"time"
