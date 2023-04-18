@@ -5,9 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"gitee.com/JasonMetal/submodule-idea-go.git/helper/config"
+	"github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	yCfg "github.com/olebedev/config"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/connectivity"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/status"
@@ -15,10 +18,6 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-
-	"github.com/grpc-ecosystem/go-grpc-middleware"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/connectivity"
 )
 
 var (

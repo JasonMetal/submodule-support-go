@@ -46,6 +46,7 @@ func initRedisPool(dbName string) ([]redisHelper.RedisInstance, error) {
 	for k, v := range servers {
 		address, _ := yCfg.Get(v, "address")
 		passwd, _ := yCfg.Get(v, "passwd")
+		db, _ := yCfg.Get(v, "db")
 
 		if address == nil {
 			os.Exit(1)
@@ -59,6 +60,7 @@ func initRedisPool(dbName string) ([]redisHelper.RedisInstance, error) {
 		rds.Client = redis.NewClient(&redis.Options{
 			Addr:        address.(string),
 			Password:    passwd.(string),
+			DB:          db.(int),
 			PoolSize:    maxActive,
 			IdleTimeout: time.Duration(idleTimeout) * time.Second,
 		})

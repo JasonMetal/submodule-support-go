@@ -149,6 +149,10 @@ func (r *RedisInstance) Hget(ctx context.Context, key, field string) (string, er
 
 	return r.Client.HGet(ctx, key, field).Result()
 }
+func (r *RedisInstance) Hlen(ctx context.Context, key string) (int64, error) {
+
+	return r.Client.HLen(ctx, key).Result()
+}
 
 func (r *RedisInstance) Hkeys(ctx context.Context, key string) ([]string, error) {
 	return r.Client.HKeys(ctx, key).Result()

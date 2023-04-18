@@ -25,3 +25,36 @@ func TestCheckMobile(t *testing.T) {
 		})
 	}
 }
+
+func TestCheckEmail(t *testing.T) {
+	type args struct {
+		str string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "邮箱格式-正确",
+			args: args{
+				str: "1254@qq.com",
+			},
+			want: true,
+		},
+		{
+			name: "邮箱格式-错误",
+			args: args{
+				str: "1254.com",
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := CheckEmail(tt.args.str); got != tt.want {
+				t.Errorf("CheckEmail() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
