@@ -2,7 +2,7 @@ package bootstrap
 
 import (
 	"fmt"
-	configHelper "gitee.com/JasonMetal/submodule-idea-go.git/helper/config"
+	configHelper "gitee.com/JasonMetal/submodule-go.git/helper/config"
 )
 
 type emailConfig struct {

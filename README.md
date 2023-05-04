@@ -1,4 +1,4 @@
-# idea-go
+# go
 
 
 ## 运行环境
@@ -14,7 +14,7 @@
 
 ### 地址
 
-[https://gitee.com/JasonMetal/submodule-idea-go](https://gitee.com/JasonMetal/submodule-idea-go)
+[https://gitee.com/JasonMetal/submodule-go](https://gitee.com/JasonMetal/submodule-go)
 
 ### 分支说明
 
@@ -68,7 +68,7 @@
 
 1. 拉取代码
     ```shell
-    git clone git@gitee.com:JasonMetal/submodule-idea-go.git
+    git clone git@gitee.com:JasonMetal/submodule-go.git
     ```
 
 
@@ -94,7 +94,7 @@
 
 ### 新模块路由配置:
 
-1. routes目录中新建: 新路由名(例如:brand.gp)
+1. routes目录中新建: 新路由名(例如:brand.go)
 
 ```go
 package router
@@ -102,7 +102,7 @@ package router
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"idea-go/app/http/controllers/brand"
+	"go/app/http/controllers/brand"
 )
 
 func RegisterOther(router *gin.Engine) {
@@ -128,8 +128,8 @@ package prize
 
 import (
 	"github.com/gin-gonic/gin"
-	"idea-go/app/http/controllers"
-	"idea-go/app/logic/prize"
+	"go/app/http/controllers"
+	"go/app/logic/prize"
 	"strconv"
 )
 
@@ -163,4 +163,4 @@ func (p *PrizeController) GetList() {
 
 - [gin框架](https://github.com/gin-gonic/gin)
 - [grpc文档](https://grpc.io/docs/)
-- [git子模块文档](https://git-scm.com/book/zh/v1/Git-%E5%B7%A5%E5%85%B7-%E5%AD%90%E6%A8%A1%E5%9D%97)
+- [git子模块文档](https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E5%AD%90%E6%A8%A1%E5%9D%97)

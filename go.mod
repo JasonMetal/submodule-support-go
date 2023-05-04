@@ -1,4 +1,4 @@
-module idea-go
+module go
 
 go 1.18
 

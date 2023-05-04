@@ -2,7 +2,7 @@ package tencentcloud
 
 import (
 	"context"
-	"gitee.com/JasonMetal/submodule-idea-go.git/bootstrap"
+	"gitee.com/JasonMetal/submodule-go.git/bootstrap"
 	"github.com/tencentyun/cos-go-sdk-v5"
 	"github.com/tencentyun/cos-go-sdk-v5/debug"
 	"net/http"

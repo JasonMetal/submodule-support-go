@@ -2,7 +2,7 @@ package bootstrap
 
 import (
 	"fmt"
-	"gitee.com/JasonMetal/submodule-idea-go.git/helper/config"
+	"gitee.com/JasonMetal/submodule-go.git/helper/config"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	sms "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms/v20210111"

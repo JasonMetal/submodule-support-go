@@ -2,7 +2,7 @@ package bootstrap
 
 import (
 	"fmt"
-	"gitee.com/JasonMetal/submodule-idea-go.git/helper/config"
+	"gitee.com/JasonMetal/submodule-go.git/helper/config"
 	"github.com/tencentyun/cos-go-sdk-v5"
 	"net/http"
 )
