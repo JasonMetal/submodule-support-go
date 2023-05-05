@@ -14,7 +14,7 @@
 
 ### 地址
 
-[https://gitee.com/JasonMetal/submodule-go](https://gitee.com/JasonMetal/submodule-go)
+[https://gitee.com/JasonMetal/submodule-support-go](https://gitee.com/JasonMetal/submodule-support-go)
 
 ### 分支说明
 
