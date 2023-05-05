@@ -14,7 +14,7 @@ import (
 	"syscall"
 	"time"
 
-	"gitee.com/JasonMetal/submodule-go.git/helper/logger"
+	"gitee.com/JasonMetal/submodule-support-go.git/helper/logger"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

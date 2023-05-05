@@ -3,8 +3,8 @@ package tencentcloud
 import (
 	"encoding/json"
 	"errors"
-	"gitee.com/JasonMetal/submodule-go.git/bootstrap"
-	"gitee.com/JasonMetal/submodule-go.git/helper/slices"
+	"gitee.com/JasonMetal/submodule-support-go.git/bootstrap"
+	"gitee.com/JasonMetal/submodule-support-go.git/helper/slices"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"strings"
 )

@@ -2,8 +2,8 @@ package tencentcloud
 
 import (
 	"fmt"
-	"gitee.com/JasonMetal/submodule-go.git/bootstrap"
-	"gitee.com/JasonMetal/submodule-go.git/entity"
+	"gitee.com/JasonMetal/submodule-support-go.git/bootstrap"
+	"gitee.com/JasonMetal/submodule-support-go.git/entity"
 
 	sts "github.com/tencentyun/qcloud-cos-sts-sdk/go"
 )

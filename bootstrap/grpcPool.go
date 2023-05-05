@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gitee.com/JasonMetal/submodule-go.git/helper/config"
+	"gitee.com/JasonMetal/submodule-support-go.git/helper/config"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	yCfg "github.com/olebedev/config"

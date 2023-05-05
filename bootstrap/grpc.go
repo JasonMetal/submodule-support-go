@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gitee.com/JasonMetal/submodule-go.git/helper/logger"
+	"gitee.com/JasonMetal/submodule-support-go.git/helper/logger"
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpcRecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpcOpentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"

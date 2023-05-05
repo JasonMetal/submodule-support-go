@@ -8,7 +8,7 @@ import (
 	redis "github.com/go-redis/redis/v8"
 	"time"
 
-	"gitee.com/JasonMetal/submodule-go.git/helper/number"
+	"gitee.com/JasonMetal/submodule-support-go.git/helper/number"
 )
 
 type RedisInstance struct {

@@ -68,7 +68,7 @@
 
 1. 拉取代码
     ```shell
-    git clone git@gitee.com:JasonMetal/submodule-go.git
+    git clone git@gitee.com:JasonMetal/submodule-support-go.git
     ```
 
 

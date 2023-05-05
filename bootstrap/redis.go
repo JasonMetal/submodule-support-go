@@ -2,8 +2,8 @@ package bootstrap
 
 import (
 	"fmt"
-	"gitee.com/JasonMetal/submodule-go.git/helper/config"
-	redisHelper "gitee.com/JasonMetal/submodule-go.git/helper/redis"
+	"gitee.com/JasonMetal/submodule-support-go.git/helper/config"
+	redisHelper "gitee.com/JasonMetal/submodule-support-go.git/helper/redis"
 	redis "github.com/go-redis/redis/v8"
 	yCfg "github.com/olebedev/config"
 	"os"

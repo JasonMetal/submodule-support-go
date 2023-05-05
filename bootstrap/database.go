@@ -3,7 +3,7 @@ package bootstrap
 import (
 	"errors"
 	"fmt"
-	"gitee.com/JasonMetal/submodule-go.git/helper/config"
+	"gitee.com/JasonMetal/submodule-support-go.git/helper/config"
 	yCfg "github.com/olebedev/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
