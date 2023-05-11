@@ -84,12 +84,11 @@ func initEnv() {
 }
 
 func InitWeb(funs []gin.HandlerFunc) *gin.Engine {
-
-	gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.DebugMode)
 	r := gin.New()
 	r.Use(SetLogger())
 	r.Use(LogRecovery())
-	//r.Use(gin.Recovery())
+	r.Use(gin.Recovery())
 	r.Use(ControlCors())
 
 	for _, v := range funs {
