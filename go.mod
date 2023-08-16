@@ -1,4 +1,4 @@
-module go
+module support-go
 
 go 1.18
 
