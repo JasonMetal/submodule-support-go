@@ -1,4 +1,4 @@
-# go
+# support-go
 
 
 ## 运行环境
@@ -102,7 +102,7 @@ package router
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"go/app/http/controllers/brand"
+	"xxx-go/app/http/controllers/brand"
 )
 
 func RegisterOther(router *gin.Engine) {
