@@ -103,7 +103,7 @@ var transport = &http.Transport{
 
 func Test_initClient(t *testing.T) {
 	req1 := Request{
-		Url:    "http://dxhd.cc",
+		Url:    "http://test-site.cc",
 		Method: "GET",
 		Headers: map[string]string{
 			"ContentType": "text/html",
@@ -127,7 +127,7 @@ func Test_initClient(t *testing.T) {
 		},
 	}
 	req2 := Request{
-		Url:    "http://dxhd.cc",
+		Url:    "http://test-site.cc",
 		Method: "GET",
 		Headers: map[string]string{
 			"ContentType": "text/html",

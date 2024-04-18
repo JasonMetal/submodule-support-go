@@ -24,7 +24,7 @@ import (
 	"time"
 )
 
-var consulAddress = "dxconsul.coolnull.com"
+var consulAddress = "test.site.com"
 var consulClient *api.Client
 var serviceId string
 

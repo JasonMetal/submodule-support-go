@@ -11,6 +11,7 @@ import (
 	"os/signal"
 	"runtime"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 
@@ -43,6 +44,8 @@ var (
 	DevEnv      string
 	TestConfig  string
 	ProjectName string
+	stdoutCache string
+	cacheLock   sync.Mutex
 )
 
 //var grpcConnPool map[string]http2.Pool
@@ -207,8 +210,7 @@ func ProjectPath() (path string) {
 	// // which reports a go.mod file path if modules are enabled.
 	// stdout, _ := exec.Command("go", "env", "GOMOD").Output()
 	// gomod := string(bytes.TrimSpace(stdout))
-	stdout, _ := exec.Command("go", "env", "GOMOD").Output()
-	path = string(bytes.TrimSpace(stdout))
+	path = getStdoutFaster()
 	if path == "/dev/null" {
 		return ""
 	}
@@ -232,4 +234,27 @@ func ProjectPath() (path string) {
 		}
 	}
 	return
+}
+
+func getStdoutFaster() string {
+	debugStart := time.Now()
+	fmt.Println("debugStart: ", debugStart)
+	cacheLock.Lock()
+	defer cacheLock.Unlock()
+
+	if stdoutCache != "" {
+		return stdoutCache
+	}
+
+	stdoutCache = getStdoutFromCommand()
+	debugEnd := time.Now()
+	duration := debugEnd.Sub(debugStart)
+	fmt.Println("debugEnd:", debugEnd)
+	fmt.Println("Duration: ", duration)
+	return stdoutCache
+}
+
+func getStdoutFromCommand() string {
+	out, _ := exec.Command("go", "env", "GOMOD").Output()
+	return string(bytes.TrimSpace(out))
 }
