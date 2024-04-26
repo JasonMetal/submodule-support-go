@@ -104,7 +104,7 @@ package router
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"go/app/http/controllers/brand"
+	"support-go/app/http/controllers/brand"
 )
 
 func RegisterOther(router *gin.Engine) {
@@ -130,8 +130,8 @@ package prize
 
 import (
 	"github.com/gin-gonic/gin"
-	"go/app/http/controllers"
-	"go/app/logic/prize"
+	"support-go/app/http/controllers"
+	"support-go/app/logic/prize"
 	"strconv"
 )
 
