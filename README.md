@@ -90,7 +90,7 @@
 ## 使用说明
 ###  顺序流程图
 
-![](https://static.manyidea.cloud/dev/uploads/uploadfile/images/20220407/img20407112944001599126087.png)
+![](./flow.png)
 
 
 
