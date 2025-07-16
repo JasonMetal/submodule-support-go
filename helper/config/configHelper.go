@@ -4,7 +4,7 @@ package config
 import (
 	configLib "github.com/olebedev/config"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
+	"os"
 )
 
 func GetConfig(filename string) (*configLib.Config, error) {
@@ -19,7 +19,9 @@ func GetConfig(filename string) (*configLib.Config, error) {
 }
 
 func GetYaml(filePath string, configData any) any {
-	config, err := ioutil.ReadFile(filePath)
+	//Deprecated
+	//config, err := ioutil.ReadFile(filePath)
+	config, err := os.ReadFile(filePath)
 	if err != nil {
 		return &configData
 	}
