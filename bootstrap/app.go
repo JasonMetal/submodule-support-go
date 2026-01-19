@@ -61,6 +61,11 @@ func Init() {
 	// InitSts()
 
 	// InitSms()
+
+	// 初始化Kafka
+	if err := InitKafka(DevEnv); err != nil {
+		logger.Warn("Kafka初始化失败(非致命错误)", zap.Error(err))
+	}
 }
 
 func SetProjectName(name string) {
@@ -149,6 +154,11 @@ func gracefulShutdown(server *http.Server) {
 	signal.Notify(ch, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGINT, os.Interrupt)
 	<-ch
 	//core.DebugLog("http shutdown")
+
+	// 关闭Kafka连接
+	if err := CloseKafka(); err != nil {
+		logger.Error("关闭Kafka连接失败", zap.Error(err))
+	}
 
 	cxt, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
