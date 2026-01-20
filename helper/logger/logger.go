@@ -2,9 +2,65 @@
 package logger
 
 import (
+	"context"
 	"encoding/json"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
+
+const (
+	//KeyRequestID   string = "requestID"
+	KeyRequestID   string = "traceId"
+	KeyAppID       string = "appId"
+	KeyUsername    string = "username"
+	KeyWatcherName string = "watcher"
+)
+
+// zapLogger is a logr.Logger that uses Zap to log.
+type ZapLogger struct {
+	// NB: this looks very similar to zap.SugaredLogger, but
+	// deals with our desire to have multiple verbosity levels.
+	zapLogger *zap.Logger
+	infoLogger
+}
+
+func (l *ZapLogger) Debugf(format string, v ...interface{}) {
+	l.zapLogger.Sugar().Debugf(format, v...)
+}
+
+func (l *ZapLogger) Infof(format string, v ...interface{}) {
+	l.zapLogger.Sugar().Infof(format, v...)
+}
+
+type infoLogger struct {
+	level zapcore.Level
+	log   *zap.Logger
+}
+
+//nolint:predeclared
+func clone() *ZapLogger {
+	if Logger == nil {
+		return &ZapLogger{}
+	}
+	return &ZapLogger{
+		zapLogger: Logger,
+	}
+}
+func L(ctx context.Context) *ZapLogger {
+	lg := clone()
+
+	if requestID := ctx.Value(KeyRequestID); requestID != nil {
+		lg.zapLogger = lg.zapLogger.With(zap.Any(KeyRequestID, requestID))
+	}
+	if username := ctx.Value(KeyUsername); username != nil {
+		lg.zapLogger = lg.zapLogger.With(zap.Any(KeyUsername, username))
+	}
+	if watcherName := ctx.Value(KeyWatcherName); watcherName != nil {
+		lg.zapLogger = lg.zapLogger.With(zap.Any(KeyWatcherName, watcherName))
+	}
+
+	return lg
+}
 
 // Logger 全局 Logger 对象
 var Logger *zap.Logger

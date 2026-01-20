@@ -1,0 +1,5 @@
+FAIL	.out [setup failed]
+# .out
+no required module provides package .out; to add it:
+	go get .out
+FAIL
