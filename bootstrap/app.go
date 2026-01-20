@@ -63,8 +63,13 @@ func Init() {
 	// InitSms()
 
 	// 初始化Kafka
-	if err := InitKafka(DevEnv); err != nil {
+	if err := InitKafka(); err != nil {
 		logger.Warn("Kafka初始化失败(非致命错误)", zap.Error(err))
+	}
+
+	// 初始化RabbitMQ
+	if err := InitRabbitMQ(); err != nil {
+		logger.Warn("RabbitMQ初始化失败(非致命错误)", zap.Error(err))
 	}
 }
 
@@ -158,6 +163,11 @@ func gracefulShutdown(server *http.Server) {
 	// 关闭Kafka连接
 	if err := CloseKafka(); err != nil {
 		logger.Error("关闭Kafka连接失败", zap.Error(err))
+	}
+
+	// 关闭RabbitMQ连接
+	if err := CloseRabbitMQ(); err != nil {
+		logger.Error("关闭RabbitMQ连接失败", zap.Error(err))
 	}
 
 	cxt, cancel := context.WithTimeout(context.Background(), 2*time.Minute)

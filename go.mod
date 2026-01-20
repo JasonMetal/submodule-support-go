@@ -18,6 +18,7 @@ require (
 	github.com/hashicorp/consul/api v1.28.2
 	github.com/leeqvip/gophp v1.1.1
 	github.com/olebedev/config v0.0.0-20190528211619-364964f3a8e4
+	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.405
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms v1.0.403
@@ -78,7 +79,6 @@ require (
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/pierrec/lz4/v4 v4.1.22 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 // indirect
-	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
