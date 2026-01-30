@@ -198,6 +198,15 @@ func (km *KafkaManager) getSyncProducer() (sarama.SyncProducer, error) {
 	return producer, nil
 }
 
+type AsyncErrorHandler func(topic string, message string, err error)
+
+var asyncErrorHandler AsyncErrorHandler
+
+// SetAsyncErrorHandler 设置异步错误处理器
+func SetAsyncErrorHandler(handler AsyncErrorHandler) {
+	asyncErrorHandler = handler
+}
+
 // getAsyncProducer 获取异步生产者(单例模式)
 func (km *KafkaManager) getAsyncProducer() (sarama.AsyncProducer, error) {
 	if km.asyncProducer != nil {
@@ -223,9 +232,18 @@ func (km *KafkaManager) getAsyncProducer() (sarama.AsyncProducer, error) {
 					log.Printf("Kafka消息发送成功: Topic=%s, Partition=%d, Offset=%d",
 						success.Topic, success.Partition, success.Offset)
 				}
-			case err := <-producer.Errors():
-				if err != nil {
-					log.Printf("Kafka消息发送失败: %v", err)
+			case errMsg := <-producer.Errors():
+				if errMsg != nil {
+					log.Printf("Kafka消息发送失败: %v", errMsg.Err)
+
+					// ✅ 调用错误处理器
+					if asyncErrorHandler != nil {
+						asyncErrorHandler(
+							errMsg.Msg.Topic,
+							string(errMsg.Msg.Value.(sarama.StringEncoder)),
+							errMsg.Err,
+						)
+					}
 				}
 			}
 		}
